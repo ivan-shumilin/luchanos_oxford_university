@@ -2,6 +2,7 @@ import sentry_sdk
 import uvicorn
 from fastapi import FastAPI
 from fastapi.routing import APIRouter
+from starlette.staticfiles import StaticFiles
 from starlette_exporter import handle_metrics
 from starlette_exporter import PrometheusMiddleware
 
@@ -9,6 +10,7 @@ import settings
 from api.handlers import user_router
 from api.login_handler import login_router
 from api.service import service_router
+from pages.router import router as router_pages
 
 # sentry configuration
 sentry_sdk.init(
@@ -36,6 +38,11 @@ main_api_router.include_router(user_router, prefix="/user", tags=["user"])
 main_api_router.include_router(login_router, prefix="/login", tags=["login"])
 main_api_router.include_router(service_router, tags=["service"])
 app.include_router(main_api_router)
+app.include_router(router_pages)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
 
 if __name__ == "__main__":
     # run app on the host and port

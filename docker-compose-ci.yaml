@@ -78,6 +78,18 @@ services:
     networks:
       - custom
     user: "0"
+
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./static:/home/web/default/static
+    depends_on:
+      - grafana
+
+
 networks:
   custom:
     driver: bridge
