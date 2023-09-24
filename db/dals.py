@@ -25,14 +25,18 @@ class UserDAL:
         self,
         name: str,
         surname: str,
+        patronymic: str,
         email: str,
+        phone: str,
         hashed_password: str,
         roles: list[PortalRole],
     ) -> User:
         new_user = User(
             name=name,
             surname=surname,
+            patronymic=patronymic,
             email=email,
+            phone=phone,
             hashed_password=hashed_password,
             roles=roles,
         )

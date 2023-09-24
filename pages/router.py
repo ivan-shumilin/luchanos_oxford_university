@@ -16,6 +16,10 @@ def get_base_page(request: Request):
 def register(request: Request):
     return templates.TemplateResponse("auth/register.html", {"request": request})
 
+@router.get("/login")
+def login(request: Request):
+    return templates.TemplateResponse("auth/login.html", {"request": request})
+
 @router.get("/recover-password")
 def recover_password(request: Request):
     return templates.TemplateResponse("auth/recover-password.html", {"request": request})
@@ -23,3 +27,7 @@ def recover_password(request: Request):
 @router.get("/forgot-password")
 def forgot_password(request: Request):
     return templates.TemplateResponse("auth/forgot-password.html", {"request": request})
+
+@router.get("/")
+def admin(request: Request):
+    return templates.TemplateResponse("admin.html", {"request": request})

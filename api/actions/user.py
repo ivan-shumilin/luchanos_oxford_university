@@ -17,7 +17,9 @@ async def _create_new_user(body: UserCreate, session) -> ShowUser:
         user = await user_dal.create_user(
             name=body.name,
             surname=body.surname,
+            patronymic=body.patronymic,
             email=body.email,
+            phone=body.phone,
             hashed_password=Hasher.get_password_hash(body.password),
             roles=[
                 PortalRole.ROLE_PORTAL_USER,
@@ -27,7 +29,9 @@ async def _create_new_user(body: UserCreate, session) -> ShowUser:
             user_id=user.user_id,
             name=user.name,
             surname=user.surname,
+            patronymic=user.patronymic,
             email=user.email,
+            phone=user.phone,
             is_active=user.is_active,
         )
 

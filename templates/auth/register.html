@@ -11,70 +11,200 @@
     <div class="card-body register-card-body">
       <p class="login-box-msg">Регистрация</p>
 
-      <form action="../../index.html" method="post">
+      <form>
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Имя">
+          <input id="name" onclick="deleteError()" type="text" class="form-control str" placeholder="Имя">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
             </div>
           </div>
+          <span id="name-error" class="error invalid-feedback"></span>
         </div>
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Фамилия">
+          <input id="surname" onclick="deleteError()" type="text" class="form-control str" placeholder="Фамилия">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
             </div>
           </div>
+          <span id="surname-error" class="error invalid-feedback"></span>
         </div>
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Отчество">
+          <input id="patronymic" onclick="deleteError()" type="text" class="form-control str none-true" placeholder="Отчество">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
             </div>
           </div>
+          <span id="patronymic-error" class="error invalid-feedback"></span>
         </div>
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Email">
+          <input id="email" onclick="deleteError()" type="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
             </div>
           </div>
+          <span id="email-error" class="error invalid-feedback"></span>
         </div>
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Телефон">
+          <input id="phone" onclick="deleteError()" type="phone" class="form-control" placeholder="Телефон">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-phone"></span>
             </div>
           </div>
+          <span id="phone-error" class="error invalid-feedback"></span>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Пароль">
+          <input id="password" onclick="deleteError()" type="password" class="form-control" placeholder="Пароль">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
             </div>
           </div>
+          <span id="password-error" class="error invalid-feedback"></span>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Повторите пароль">
+          <input id="passwordConfirmation" onclick="deleteError()" type="password" class="form-control" placeholder="Повторите пароль">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
             </div>
           </div>
-        </div>
-        <div class="social-auth-links text-center">
-          <button type="submit" class="btn btn-primary btn-block">Регистрация</button>
+          <span id="passwordConfirmation-error" class="error invalid-feedback"></span>
         </div>
       </form>
-      <a href="login.html" class="text-center">Уже есть аккаунт</a>
+
+      <div class="form-group mb-0">
+        <div class="social-auth-links text-center">
+          <button onclick="createUser()" class="btn btn-primary btn-block">Регистрация</button>
+        </div>
+        <span id="terms-error" class="error invalid-feedback" style="display: inline;"></span>
+      </div>
+      <a href="{{ url_for('login') }}" class="text-center">Уже есть аккаунт</a>
     </div>
   </div>
 </div>
 </body>
+<!-- InputMask -->
+<script src="{{ url_for('static', path='js/imask.js') }}"></script>
+
+<script>  
+const element = document.getElementById('phone');
+const maskOptions = {
+  mask: '+{7} (000) 000 00 00'
+}; 
+const mask = IMask(element, maskOptions);
+
+// ###################
+// Запросы по API   ##
+// ###################
+const createUserAPI = async function(data) {
+    let url = '/user'
+    let body = {
+      "name": data["name"].value,
+      "surname": data["surname"].value,
+      "patronymic": data["patronymic"].value,
+      "email": data["email"].value,
+      "phone": data["phone"].value,
+      "password": data["password"].value,
+      "passwordConfirmation": data["passwordConfirmation"].value,
+    };
+
+    let response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;',
+      },
+      body: JSON.stringify(body)
+    });
+    let result = await response;
+    return result;
+}
+
+
+// ###################
+// Обработка формы  ##
+// ###################
+async function createUser() {
+  let data = {
+    "name": document.getElementById('name'),
+    "surname": document.getElementById('surname'),
+    "patronymic": document.getElementById('patronymic'),
+    "email": document.getElementById('email'),
+    "phone": document.getElementById('phone'),
+    "password": document.getElementById('password'),
+    "passwordConfirmation": document.getElementById('passwordConfirmation'),
+  }
+
+  // проверка формы
+  let isOK = validationForm(data);
+
+  if (isOK) {
+    let res = await createUserAPI(data);
+    if (res.ok) {
+      console.log("Пользователь создан")
+      window.location.href = "{{ url_for('login') }}";
+    } else {
+      document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`    
+    }        
+  }  
+}
+
+function validationForm(data) {
+  var isOK = true
+  var str = new RegExp("[^а-яА-Яa-zA-ZёЁ+/)/(/-/'/ /./,-]+");
+  var strEmail = new RegExp("[^a-zA-Z0-9/-/./@/_-]+");
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    // проверка каждого поля. все поля должны быть заполнены
+    if (!control.value & !control.classList.contains('none-true')) {
+      isOK = true
+      control.classList.add('is-invalid');
+      document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
+    }
+
+    // проверка полей, которые должны состоять опр-х символов
+    if (control.classList.contains('str')) {
+      if (str.test(control.value)) {
+        isOK = true
+        control.classList.add('is-invalid');
+        document.getElementById(`${control.id}-error`).innerHTML = "Поле может содержать только буквы и символы ()-,."        
+      }
+    }
+  });
+
+  // // проверка почты
+  if (strEmail.test(data.email.value) || !data.email.value.includes('@') || !data.email.value.includes('.')) {
+    isOK = true
+    data.email.classList.add('is-invalid');
+    document.getElementById(`${data.email.id}-error`).innerHTML = "Такой почты не существует"
+  }
+  
+  // // проверка паролей на равенство
+  if (data.password.value != data.passwordConfirmation.value) {
+    isOK = true
+    data.password.classList.add('is-invalid');
+    data.passwordConfirmation.classList.add('is-invalid');
+    document.getElementById(`${data.password.id}-error`).innerHTML = "Пароли не совпадают"
+    document.getElementById(`${data.passwordConfirmation.id}-error`).innerHTML = "Пароли не совпадают"
+  }
+
+  return isOK
+}
+
+function deleteError() {
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    if (control.classList.contains('is-invalid')) {
+      control.classList.remove('is-invalid');
+    }
+  });
+  document.getElementById('terms-error').innerHTML = ""
+
+}
+
+</script>
 {% endblock %}

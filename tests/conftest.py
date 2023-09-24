@@ -31,8 +31,8 @@ def event_loop():
 
 @pytest.fixture(scope="session", autouse=True)
 async def run_migrations():
-    os.system("alembic init migrations")
-    os.system('alembic revision --autogenerate -m "test running migrations"')
+    os.system("alembic init migrations_example")
+    os.system('alembic revision --autogenerate -m "test running migrations_example"')
     os.system("alembic upgrade heads")
 
 

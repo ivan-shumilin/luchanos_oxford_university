@@ -11,33 +11,109 @@
       <p class="login-box-msg">Авторизация</p>
       <form>
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Email">
+          <input id="email" type="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
             </div>
           </div>
+          <span id="email-error" class="error invalid-feedback"></span>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Password">
+          <input id="password" type="password" class="form-control" placeholder="Password">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
             </div>
           </div>
-        </div>
-        <div class="social-auth-links text-center mb-3">
-          <button type="submit" class="btn btn-primary btn-block">Войти</button>
+          <span id="password-error" class="error invalid-feedback"></span>
         </div>
       </form>
-      <p class="mb-1">
-        <a href="forgot-password.html">Восстановить пароль</a>
-      </p>
+      <div class="social-auth-links text-center mb-3">
+        <button onclick="login()" class="btn btn-primary btn-block">Войти</button>
+      </div>
+      <span id="terms-error" class="error invalid-feedback" style="display: inline;"></span>
+
+      
+      <!-- <p class="mb-1">
+        <a href="{{ url_for('register') }}">Восстановить пароль</a>
+      </p> -->
       <p class="mb-0">
-        <a href="register.html" class="text-center">Регистрация</a>
+        <a href="{{ url_for('register') }}" class="text-center">Регистрация</a>
       </p>
     </div>
   </div>
 </div>
 </body>
+<script>
+// ###################
+// Запросы по API   ##
+// ###################
+const loginAPI = async function(data) {
+    let url = '/login/token'
+
+    const formData = new FormData();
+    formData.append('username', data["email"].value);
+    formData.append('password', data["password"].value);
+
+    let response = await fetch(url, {
+      method: 'POST',
+      body: formData
+    });
+    let result = await response.text();
+    return result;
+}
+
+// ###################
+// Обработка формы  ##
+// ###################
+async function login() {
+  let data = {
+    "email": document.getElementById('email'),
+    "password": document.getElementById('password'),
+  }
+
+  // проверка формы
+  let isOK = validationForm(data);
+
+  if (isOK) {
+    let res = await loginAPI(data);
+    // if (res.ok) {
+    //   console.log("Токен получен")
+    //   let token = "123451"
+    //   window.location.href = "?token=2";
+    // } else {
+    //   document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`    
+    // }
+    window.location.href = "/?token=2";       
+  }  
+}
+
+function validationForm(data) {
+  var isOK = true
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    // проверка каждого поля. все поля должны быть заполнены
+    if (!control.value & !control.classList.contains('none-true')) {
+      isOK = true
+      control.classList.add('is-invalid');
+      document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
+    }
+  });
+
+  return isOK
+}
+
+function deleteError() {
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    if (control.classList.contains('is-invalid')) {
+      control.classList.remove('is-invalid');
+    }
+  });
+  document.getElementById('terms-error').innerHTML = ""
+
+}
+
+</script>
 {% endblock %}
