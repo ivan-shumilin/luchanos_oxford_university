@@ -78,14 +78,20 @@ async function login() {
 
   if (isOK) {
     let res = await loginAPI(data);
-    // if (res.ok) {
-    //   console.log("Токен получен")
-    //   let token = "123451"
-    //   window.location.href = "?token=2";
-    // } else {
-    //   document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`    
-    // }
-    window.location.href = "/?token=2";       
+    let obj = JSON.parse(res)
+    try {
+      if (obj.detail == 'Incorrect username or password') {
+        document.getElementById('terms-error').innerHTML = `Неверное имя пользователя или пароль`
+      } else {
+        if (obj.access_token ) {
+          console.log("Токен получен")
+          window.location.href = `/?token=${obj.access_token}&user_id=${obj.user_id}`;
+        } 
+      }
+
+    } catch {
+        document.getElementById('terms-error').innerHTML = `Ошибка сервера`
+    }
   }  
 }
 
@@ -114,6 +120,5 @@ function deleteError() {
   document.getElementById('terms-error').innerHTML = ""
 
 }
-
 </script>
 {% endblock %}

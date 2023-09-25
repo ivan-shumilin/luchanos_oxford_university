@@ -31,4 +31,4 @@ async def login_for_access_token(
         data={"sub": user.email, "other_custom_data": [1, 2, 3, 4]},
         expires_delta=access_token_expires,
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_id": user.user_id,}

@@ -2,6 +2,7 @@ import sentry_sdk
 import uvicorn
 from fastapi import FastAPI
 from fastapi.routing import APIRouter
+from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 from starlette_exporter import handle_metrics
 from starlette_exporter import PrometheusMiddleware
@@ -27,6 +28,20 @@ sentry_sdk.init(
 
 # create instance of the app
 app = FastAPI(title="luchanos-oxford-university")
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
+    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
+                   "Authorization"],
+)
+
 app.add_middleware(PrometheusMiddleware)
 app.add_route("/metrics", handle_metrics)
 

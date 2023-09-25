@@ -16,7 +16,9 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url_for('admin') }}" class="nav-link">Главная</a>
+        <a href="{{ url_for('admin') }}?token={{ token }}&user_id={{ user_id }}" class="nav-link active">
+          Главная
+        </a>
       </li>
     </ul>
 
@@ -52,8 +54,8 @@
           <img src="{{ url_for('static', path='img/avatar-none.png')}}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">
-              {% block user_name %}{% endblock %}
+          <a id="user_name" class="d-block">
+              
           </a>
         </div>
       </div>
@@ -63,7 +65,7 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item menu-open">
-            <a href="#" class="nav-link active">
+            <a id="admin" href="{{ url_for('admin') }}?token={{ token }}&user_id={{ user_id }}" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -72,7 +74,7 @@
           </li>
           <!-- Должности -->
           <li class="nav-item">
-            <a href="pages/widgets.html" class="nav-link">
+            <a id="job_title" href="{{ url_for('job_title') }}?token={{ token }}&user_id={{ user_id }}" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Должности
@@ -143,7 +145,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Dashboard</h1>
+            <h1 class="m-0">{% block title_page %}{% endblock %}</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
           </div><!-- /.col -->
