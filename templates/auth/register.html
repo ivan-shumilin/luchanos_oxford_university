@@ -83,13 +83,13 @@
         </div>
         <span id="terms-error" class="error invalid-feedback" style="display: inline;"></span>
       </div>
-      <a href="{{ url_for('login') }}" class="text-center">Уже есть аккаунт</a>
+      <a href="login" class="text-center">Уже есть аккаунт</a>
     </div>
   </div>
 </div>
 </body>
 <!-- InputMask -->
-<script src="{{ url_for('static', path='js/imask.js') }}"></script>
+<script src="static/js/imask.js"></script>
 
 <script>  
 const element = document.getElementById('phone');
@@ -146,7 +146,7 @@ async function createUser() {
     let res = await createUserAPI(data);
     if (res.ok) {
       console.log("Пользователь создан")
-      window.location.href = "{{ url_for('login') }}";
+      window.location.href = "login";
     } else {
       document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`    
     }        
