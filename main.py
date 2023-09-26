@@ -29,18 +29,18 @@ sentry_sdk.init(
 # create instance of the app
 app = FastAPI(title="luchanos-oxford-university")
 
-origins = [
-    "http://localhost:3000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
-    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
-                   "Authorization"],
-)
+# origins = [
+#     "http://localhost:3000",
+# ]
+#
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
+#     allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
+#                    "Authorization"],
+# )
 
 app.add_middleware(PrometheusMiddleware)
 app.add_route("/metrics", handle_metrics)
