@@ -1,0 +1,115 @@
+{% extends "nav.html" %}
+{% block title %}Должности{% endblock %}
+{% block title_page %}Должности{% endblock %}
+{% block user_name %}User name{% endblock %}
+{% block main %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">    
+      <div class="col-md-6">      
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Добавить должность</h3>
+          </div>
+          <form>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Название</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Название">
+              </div>
+            </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary">Добавить</button>
+            </div>
+          </form>
+        </div>    
+      </div>
+
+      <div class="card card-primary">
+        <div class="card-header">
+          <h3 class="card-title">Должности</h3>
+        </div>
+        
+        <div class="card-body">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th style="width: 10px">#</th>
+                <th>Название</th>
+                <th>Количесво сотрудников</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1.</td>
+                <td>Повар</td>
+                <td>15</td>
+              </tr>
+              <tr>
+                <td>2.</td>
+                <td>Бариста</td>
+                <td>15</td>
+              </tr>
+              <tr>
+                <td>3.</td>
+                <td>Уборщица</td>
+                <td>15</td>
+              </tr>
+            </tbody>
+        </table>
+        </div>
+        </div>
+        </div>  
+    </div>
+  </div> 
+
+
+
+</section>
+
+<script>
+const USER = {
+  'user_id': "{{ user_id }}",
+  'token': "{{ token }}",
+}
+
+const PAGE = "{{ page }}"
+
+addAvtive(PAGE)
+
+// ###################
+// Запросы по API   ##
+// ###################
+const getInfoByUserAPI = async function(user_id, token) {
+    let url = `user?user_id=${user_id}`
+    let response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json;',
+        'Authorization': `Bearer ${token}`, 
+      },
+    });
+    let result = await response.text();
+    return result;
+} 
+
+// получаем информацию о пользователе
+getInfoByUser(USER.user_id, USER.token)
+
+async function getInfoByUser(user_id, token) {
+  res = await getInfoByUserAPI(user_id, token);
+  var obj = JSON.parse(res);
+  document.getElementById('user_name').innerHTML = `${obj.name} ${obj.surname} ${obj.patronymic}`
+}
+
+// добавляем класс active в активный элемент nav
+function addAvtive(page_name) {
+  const navLink = document.querySelectorAll('.nav-link');
+  navLink.forEach(control => {
+    control.classList.remove('active');
+    }
+  );
+  document.getElementById(page_name).classList.add('active')
+}
+</script>
+{% endblock %}
