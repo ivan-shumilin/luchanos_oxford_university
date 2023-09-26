@@ -5,7 +5,7 @@
 
   <!-- Preloader -->
   <div class="preloader flex-column justify-content-center align-items-center">
-    <img class="" src="{{ url_for('static', path='img/petrushka.png') }}" alt="petrushka" height="60" width="180">
+    <img class="" src="static/img/petrushka.png" alt="petrushka" height="60" width="180">
   </div>
 
   <!-- Navbar -->
@@ -41,7 +41,7 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="{{ url_for('admin') }}" class="brand-link">
+    <a  class="brand-link">
       <span class="brand-text ml-3">Petrushka  HR</span>
     </a>
 
@@ -51,7 +51,7 @@
 
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="{{ url_for('static', path='img/avatar-none.png')}}" class="img-circle elevation-2" alt="User Image">
+          <img src="static/img/avatar-none.png" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a id="user_name" class="d-block">
@@ -65,7 +65,7 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item menu-open">
-            <a id="admin" href="{{ url_for('admin') }}?token={{ token }}&user_id={{ user_id }}" class="nav-link active">
+            <a id="admin" href="?token={{ token }}&user_id={{ user_id }}" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -74,7 +74,7 @@
           </li>
           <!-- Должности -->
           <li class="nav-item">
-            <a id="job_title" href="{{ url_for('job_title') }}?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+            <a id="job_title" href="?token={{ token }}&user_id={{ user_id }}" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Должности
