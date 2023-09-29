@@ -85,7 +85,7 @@ async function login() {
       } else {
         if (obj.access_token ) {
           console.log("Токен получен")
-          window.location.href = `/?token=${obj.access_token}&user_id=${obj.user_id}`;
+          window.location.href = `admin/?token=${obj.access_token}&user_id=${obj.user_id}`;
         } 
       }
 

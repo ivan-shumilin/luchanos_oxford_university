@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, Depends, Query
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.responses import RedirectResponse
 
 from api.actions.auth import get_current_user_from_token
 from db.models import User
@@ -32,10 +33,10 @@ def recover_password(request: Request):
 def forgot_password(request: Request):
     return templates.TemplateResponse("auth/forgot-password.html", {"request": request})
 
-@router.get("/job_title")
-def job_title(request: Request, token: str, user_id: str):
+@router.get("/job-title-add")
+def job_title_add(request: Request, token: str, user_id: str):
     return templates.TemplateResponse(
-        "job_title.html",
+        "job-title-add.html",
         {
             "request": request,
             "token": token,
@@ -44,18 +45,142 @@ def job_title(request: Request, token: str, user_id: str):
         }
     )
 
-@router.get("/")
-def admin(request: Request, token: str, user_id: str):
-    # здесь можно использовать значение параметра token для авторизации запросов
+@router.get("/job-title-list")
+def job_title_list(request: Request, token: str, user_id: str):
     return templates.TemplateResponse(
-        "admin.html",
+        "job-title-list.html",
         {
             "request": request,
             "token": token,
             "user_id": user_id,
-            "page": "admin",
+            "page": "job_title",
         }
     )
+
+@router.get("/admin")
+def admin(request: Request):
+    token: str = request.query_params.get('token', None)
+    user_id: str = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        return templates.TemplateResponse(
+            "admin.html",
+            {
+                "request": request,
+                "token": token,
+                "user_id": user_id,
+                "page": "admin",
+            }
+        )
+    return RedirectResponse(url='/login')
+
+
+@router.get("/employees-list")
+def employees_list(request: Request):
+    token: str = request.query_params.get('token', None)
+    user_id: str = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        return templates.TemplateResponse(
+            "employees-list.html",
+            {
+                "request": request,
+                "token": token,
+                "user_id": user_id,
+                "page": "employees",
+            }
+        )
+    return RedirectResponse(url='/login')
+
+@router.get("/employees-add")
+def employees_add(request: Request):
+    token: str = request.query_params.get('token', None)
+    user_id: str = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        return templates.TemplateResponse(
+            "employees-add.html",
+            {
+                "request": request,
+                "token": token,
+                "user_id": user_id,
+                "page": "employees",
+            }
+        )
+    return RedirectResponse(url='/login')
+
+@router.get("/points-list")
+def points_list(request: Request):
+    token: str = request.query_params.get('token', None)
+    user_id: str = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        return templates.TemplateResponse(
+            "points-list.html",
+            {
+                "request": request,
+                "token": token,
+                "user_id": user_id,
+                "page": "points",
+            }
+        )
+    return RedirectResponse(url='/login')
+
+@router.get("/points-add")
+def pointsaddt(request: Request):
+    token: str = request.query_params.get('token', None)
+    user_id: str = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        return templates.TemplateResponse(
+            "points-add.html",
+            {
+                "request": request,
+                "token": token,
+                "user_id": user_id,
+                "page": "points",
+            }
+        )
+    return RedirectResponse(url='/login')
+
+
+@router.get("/user-documentation")
+def user_documentation(request: Request):
+    token: str = request.query_params.get('token', None)
+    user_id: str = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        return templates.TemplateResponse(
+            "user-documentation.html",
+            {
+                "request": request,
+                "token": token,
+                "user_id": user_id,
+                "page": "user-documentation",
+            }
+        )
+    return RedirectResponse(url='/login')
+
+
+@router.get("/visits_journal")
+def visits_journal(request: Request):
+    token: str = request.query_params.get('token', None)
+    user_id: str = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        return templates.TemplateResponse(
+            "visits_journal.html",
+            {
+                "request": request,
+                "token": token,
+                "user_id": user_id,
+                "page": "visits_journal",
+            }
+        )
+    return RedirectResponse(url='/login')
+
+
+
 
 
 # @router.get("/{token}")

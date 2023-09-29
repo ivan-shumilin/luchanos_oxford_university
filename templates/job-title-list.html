@@ -1,0 +1,103 @@
+{% extends "nav.html" %}
+{% block title %}Должности{% endblock %}
+{% block title_page %}Должности{% endblock %}
+{% block user_name %}User name{% endblock %}
+{% block main %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Список должностей</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+              <tr>
+                <th>Название</th>
+                <th>Кол-во сотрудников</th>
+              </tr>
+              </thead>
+              <tbody>
+              
+              <tr>
+                <td>Генеральный директор</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Бухгалтер</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Менеджер по продажам</td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td>Генеральный директор</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Генеральный директор</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Генеральный директор</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Повар г/ц</td>
+                <td>10</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container-fluid -->
+</section>
+{% endblock %}
+
+{% block scripts_footer %}
+<!-- DataTables  & Plugins -->
+<script src="static/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="static/plugins/jszip/jszip.min.js"></script>
+<script src="static/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="static/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+$(function () {
+$("#example1").DataTable({
+  "responsive": true, "lengthChange": true, "autoWidth": false,
+  "buttons": ["excel", "pdf", "print", "colvis"]
+}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+$('#example2').DataTable({
+  "paging": true,
+  "lengthChange": false,
+  "searching": false,
+  "ordering": true,
+  "info": true,
+  "autoWidth": false,
+  "responsive": true,
+});
+});
+</script>
+{% endblock %}

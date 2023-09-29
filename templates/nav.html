@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+  .icon-exit {
+    height: 15px !important;
+    width: 15px !important;
+  }
+</style>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
 
@@ -27,11 +33,6 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
           <i class="fas fa-expand-arrows-alt"></i>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
         </a>
       </li>
     </ul>
@@ -65,68 +66,126 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item menu-open">
-            <a id="admin" href="?token={{ token }}&user_id={{ user_id }}" class="nav-link active">
+            <a id="admin" href="admin?token={{ token }}&user_id={{ user_id }}" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
               </p>
             </a>
           </li>
-          <!-- Должности -->
-          <li class="nav-item">
-            <a id="job_title" href="?token={{ token }}&user_id={{ user_id }}" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
-              <p>
-                Должности
-              </p>
-            </a>
-          </li>
 
-          <!-- Сотрудники -->
+          <!-- Журнал -->
           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
+            <a id="visits_journal" href="visits_journal/?token={{ token }}&user_id={{ user_id }}"  class="nav-link">
+              <i class="nav-icon fas fa-calendar text-olive"></i>
               <p>
-                Сотрудники
-                <i class="fas fa-angle-left right"></i>
+                Журнал
               </p>
             </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="pages/tables/simple.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Сколково</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="pages/tables/data.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Алкон</p>
-                </a>
-              </li>
-            </ul>
           </li>
 
           <!-- Заведения -->
           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
+            <a id="points" class="nav-link">
+              <i class="nav-icon fas fa-university text-olive"></i>
               <p>
                 Заведения
-                <i class="fas fa-angle-left right"></i>
+                <i class="fas fa-angle-left right text-olive"></i>
+              </p>
+            </a> 
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
+                <a href="points-list/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+                  <i class="nav-icon fas fa-copy"></i>
+                  <p>Список</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="points-add/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+                  <i class="nav-icon far fa-plus-square"></i>
+                  <p>Добавить</p>
+                </a>
+              </li>
+            </ul>            
+          </li>
+
+
+          <!-- Сотрудники -->
+          <li class="nav-item">
+            <a id="employees" class="nav-link">
+              <i class="nav-icon fas fa-heart text-olive"></i>
+              <p>
+                Сотрудники
+                <i class="fas fa-angle-left right text-olive"></i>
+               </p>
+            </a>
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
+                <a href="employees-list/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+                  <i class="nav-icon fas fa-copy"></i>
+                  <p>Список</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="employees-add/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+                  <i class="nav-icon far fa-plus-square"></i>
+                  <p>Добавить</p>
+                </a>
+              </li>
+            </ul>         
+          </li>
+
+          <!-- Должности -->
+          <li class="nav-item">
+            <a id="job_title"  class="nav-link">
+              <i class="nav-icon fas fa-suitcase text-olive"></i>
+              <p>
+                Должности
+                <i class="fas fa-angle-left right text-olive"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
+                <a href="job-title-list/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+                  <i class="nav-icon fas fa-copy"></i>
+                  <p>Список</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="job-title-add/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+                  <i class="nav-icon far fa-plus-square"></i>
+                  <p>Добавить</p>
+                </a>
+              </li>
+            </ul>  
+          </li>
+
+          <!-- Документация -->
+          <li class="nav-item">
+            <a id ="user-documentation" class="nav-link">
+              <i class="nav-icon fas fa-book text-olive"></i>
+              <p>
+                Документация
+                <i class="fas fa-angle-left right text-olive"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="pages/tables/simple.html" class="nav-link">
+                <a href="user-documentation/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Сколково</p>
+                  <p>Пользовательская</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="pages/tables/data.html" class="nav-link">
+                <a href="docs" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Алкон</p>
+                  <p>API<span class="right badge badge-danger">DEV</span></p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="https://adminlte.io/docs/3.1/" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Adminlte 3.1<span class="right badge badge-danger">DEV</span></p>
                 </a>
               </li>
             </ul>
@@ -170,5 +229,55 @@
 <!-- ./wrapper -->
 
 </body>
+<script>
+  const USER = {
+    'user_id': "{{ user_id }}",
+    'token': "{{ token }}",
+  }
+  
+  const PAGE = "{{ page }}"
+  
+  addAvtive(PAGE)
+  
+  // ###################
+  // Запросы по API   ##
+  // ###################
+  const getInfoByUserAPI = async function(user_id, token) {
+      let url = `user?user_id=${user_id}`
+      let response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;',
+          'Authorization': `Bearer ${token}`, 
+        },
+      });
+      let result = await response.text();
+      return result;
+  } 
+  
+  // получаем информацию о пользователе
+  getInfoByUser(USER.user_id, USER.token)
+  
+  async function getInfoByUser(user_id, token) {
+    res = await getInfoByUserAPI(user_id, token);
+    if (res == '{"detail":"Could not validate credentials"}' ||
+        res == '{"detail":[{"loc":["query","user_id"],"msg":"value is not a valid uuid","type":"type_error.uuid"}]}') {
+      window.location.href = `login`;
+    } else {
+      var obj = JSON.parse(res);
+      document.getElementById('user_name').innerHTML = `${obj.name} ${obj.surname} <a href="login"><img src="static/img/exit.svg" class="icon-exit" width="15px" height="15px" alt="Выход"></a>`
+    }
+  }
+  
+  // добавляем класс active в активный элемент nav
+  function addAvtive(page_name) {
+    const navLink = document.querySelectorAll('.nav-link');
+    navLink.forEach(control => {
+      control.classList.remove('active');
+      }
+    );
+    document.getElementById(page_name).classList.add('active')
+  }
+  </script>
 {% endblock %}
 

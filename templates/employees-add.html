@@ -1,0 +1,61 @@
+{% extends "nav.html" %}
+{% block title %}Сотрудники{% endblock %}
+{% block title_page %}Сотрудники{% endblock %}
+{% block user_name %}User name{% endblock %}
+{% block main %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Добавить сотрудника</h3>
+          </div>
+          <form>
+            <div class="card-body">
+              <div class="form-group">
+                <input id="name" onclick="deleteError()" type="email" class="form-control" placeholder="Имя">
+              </div>
+              <div class="form-group">
+                <input id="surname" onclick="deleteError()" type="text" class="form-control str" placeholder="Фамилия">
+              </div>
+              <div class="form-group">
+                <input id="patronymic" onclick="deleteError()" type="text" class="form-control str none-true" placeholder="Отчество">
+              </div>
+              <div class="form-group">
+                <input id="email" onclick="deleteError()" type="email" class="form-control" placeholder="Email">
+              </div>
+              <div class="form-group">
+                <input id="phone" onclick="deleteError()" type="phone" class="form-control" placeholder="Телефон">
+              </div>
+              <div class="form-group">
+                <select id="job-title" onclick="deleteError()" class="form-control" placeholder="Должность">
+                  <option selected disabled hidden>Должность</option>
+                  <option>Генеральный директор</option>
+                  <option>Финансовый директор</option>
+                  <option>Руководитель отдела маркетинга</option>
+                  <option>Начальник отдела кадров</option>
+                  <option>Бухгалтер</option>
+                  <option>Повар</option>
+                  <option>Бариста</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <select id="salary-type" onclick="deleteError()" class="form-control" placeholder="Тип начисления з/п">
+                  <option selected disabled hidden>Тип начисления з/п</option>
+                  <option>Оклад</option>
+                  <option>Ставка за выход</option>
+                  <option>Часовая ставка</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary">Добавить</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

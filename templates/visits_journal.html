@@ -1,0 +1,560 @@
+{% extends "nav.html" %}
+{% block title %}Журнал{% endblock %}
+{% block title_page %}Журнал{% endblock %}
+{% block user_name %}User name{% endblock %}
+{% block main %}
+<!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Журнал посещений</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>Дата</th>
+                    <th>ФИО</th>
+                    <th>Заведение</th>
+                    <th>Начало смены</th>
+                    <th>Конец смены</th>
+                    <th>Кол-во часов</th>
+                    <th>Комметнарий</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Михайлова Ольга Сергеевна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Михайлова Ольга Сергеевна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Михайлова Ольга Сергеевна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Михайлова Ольга Сергеевна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Петров Петр Петрович</td>
+                    <td>СК</td>
+                    <td>9:10</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Петров Петр Петрович</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Михайлова Ольга Сергеевна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Петров Петр Петрович</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:43</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>8:15</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>9:05</td>
+                    <td>17:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:23</td>
+                    <td>7</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>8:15</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:53</td>
+                    <td>9</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:23</td>
+                    <td>7</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>8:15</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Иванов Иван Иванович</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Иванов Иван Иванович</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:53</td>
+                    <td>9</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Иванов Иван Иванович</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:23</td>
+                    <td>7</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Петров Петр Петрович</td>
+                    <td>СК</td>
+                    <td>9:10</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Петров Петр Петрович</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Михайлова Ольга Сергеевна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Петров Петр Петрович</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:43</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>8:15</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>9:05</td>
+                    <td>17:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:23</td>
+                    <td>7</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>8:15</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>Алкон</td>
+                    <td>8:05</td>
+                    <td>18:53</td>
+                    <td>9</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>Алкон</td>
+                    <td>9:00</td>
+                    <td>18:23</td>
+                    <td>7</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>8:15</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Иванов Иван Иванович</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Иванов Иван Иванович</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:53</td>
+                    <td>9</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Иванов Иван Иванович</td>
+                    <td>Алкон</td>
+                    <td>9:00</td>
+                    <td>18:23</td>
+                    <td>7</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Петров Петр Петрович</td>
+                    <td>Алкон</td>
+                    <td>9:10</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Петров Петр Петрович</td>
+                    <td>Алкон</td>
+                    <td>9:00</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Михайлова Ольга Сергеевна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Петров Петр Петрович</td>
+                    <td>Алкон</td>
+                    <td>9:00</td>
+                    <td>18:43</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>8:15</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>Алкон</td>
+                    <td>8:05</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>9:05</td>
+                    <td>17:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>29.09.23</td>
+                    <td>Сидорова Елена Александровна</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:23</td>
+                    <td>7</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>Алкон</td>
+                    <td>8:15</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>27.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>28.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>Алкон</td>
+                    <td>8:05</td>
+                    <td>18:53</td>
+                    <td>9</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>24.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>Алкон</td>
+                    <td>9:00</td>
+                    <td>18:23</td>
+                    <td>7</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td>26.09.23</td>
+                    <td>Козлов Андрей Владимирович</td>
+                    <td>СК</td>
+                    <td>8:15</td>
+                    <td>18:53</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>23.09.23</td>
+                    <td>Иванов Иван Иванович</td>
+                    <td>Алкон</td>
+                    <td>8:05</td>
+                    <td>18:57</td>
+                    <td>8</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>22.09.23</td>
+                    <td>Иванов Иван Иванович</td>
+                    <td>СК</td>
+                    <td>8:05</td>
+                    <td>18:53</td>
+                    <td>9</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>21.09.23</td>
+                    <td>Иванов Иван Иванович</td>
+                    <td>СК</td>
+                    <td>9:00</td>
+                    <td>18:23</td>
+                    <td>7</td>
+                    <td></td>
+                  </tr>
+                  
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+{% endblock %}
+
+{% block scripts_footer %}
+<!-- DataTables  & Plugins -->
+<script src="static/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="static/plugins/jszip/jszip.min.js"></script>
+<script src="static/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="static/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,
+      "buttons": ["excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+{% endblock %}

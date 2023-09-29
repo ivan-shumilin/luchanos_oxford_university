@@ -17,6 +17,7 @@
           <div class="icon">
             <i class="ion ion-person-add"></i>
           </div>
+          <a href="employees-list/?token={{ token }}&user_id={{ user_id }}" class="small-box-footer">Показать <i class="fas fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -30,6 +31,7 @@
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
+          <a href="points-list/?token={{ token }}&user_id={{ user_id }}" class="small-box-footer">Показать <i class="fas fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -38,47 +40,47 @@
 </section>
 
 <script>
-const USER = {
-  'user_id': "{{ user_id }}",
-  'token': "{{ token }}",
-}
+// const USER = {
+//   'user_id': "{{ user_id }}",
+//   'token': "{{ token }}",
+// }
 
-const PAGE = "{{ page }}"
+// const PAGE = "{{ page }}"
 
-addAvtive(PAGE)
-// ###################
-// Запросы по API   ##
-// ###################
-const getInfoByUserAPI = async function(user_id, token) {
-    let url = `user?user_id=${user_id}`
-    let response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;',
-        'Authorization': `Bearer ${token}`, 
-      },
-    });
-    let result = await response.text();
-    return result;
-} 
+// addAvtive(PAGE)
+// // ###################
+// // Запросы по API   ##
+// // ###################
+// const getInfoByUserAPI = async function(user_id, token) {
+//     let url = `user?user_id=${user_id}`
+//     let response = await fetch(url, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json;',
+//         'Authorization': `Bearer ${token}`, 
+//       },
+//     });
+//     let result = await response.text();
+//     return result;
+// } 
 
-// получаем информацию о пользователе
-getInfoByUser(USER.user_id, USER.token)
+// // получаем информацию о пользователе
+// getInfoByUser(USER.user_id, USER.token)
 
-async function getInfoByUser(user_id, token) {
-  res = await getInfoByUserAPI(user_id, token);
-  var obj = JSON.parse(res);
-  document.getElementById('user_name').innerHTML = `${obj.name} ${obj.surname} ${obj.patronymic}`
-}
+// async function getInfoByUser(user_id, token) {
+//   res = await getInfoByUserAPI(user_id, token);
+//   var obj = JSON.parse(res);
+//   document.getElementById('user_name').innerHTML = `${obj.name} ${obj.surname}`
+// }
 
-// добавляем класс active в активный элемент nav
-function addAvtive(page_name) {
-  const navLink = document.querySelectorAll('.nav-link');
-  navLink.forEach(control => {
-    control.classList.remove('active');
-    }
-  );
-  document.getElementById(page_name).classList.add('active')
-}
-</script>
+// // добавляем класс active в активный элемент nav
+// function addAvtive(page_name) {
+//   const navLink = document.querySelectorAll('.nav-link');
+//   navLink.forEach(control => {
+//     control.classList.remove('active');
+//     }
+//   );
+//   document.getElementById(page_name).classList.add('active')
+// }
+// </script>
 {% endblock %}

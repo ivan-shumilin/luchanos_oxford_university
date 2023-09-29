@@ -1,0 +1,151 @@
+{% extends "nav.html" %}
+{% block title %}Сотрудники{% endblock %}
+{% block title_page %}Сотрудники{% endblock %}
+{% block user_name %}User name{% endblock %}
+{% block main %}
+<!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Список сотрудников</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>ФИО</th>
+                    <th>Email</th>
+                    <th>Телефон</th>
+                    <th>Должность</th>
+                    <th>Место работы</th>
+                    <th>Типов начисления з/п</th>
+                  </tr>
+
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>Иванов Иван Иванович</th>
+                    <td>mail@mail.ru</th>
+                    <td>8 (999) 99 99911</th>
+                    <td>Генеральный директор</th>
+                    <td>СК</th>
+                    <td>Оклад</th>
+                  </tr>
+                  <tr>
+                    <td>Петров Петр Петрович</th>
+                    <td>mail@mail.ru</th>
+                    <td>8 (999) 99 99911</th>
+                    <td>Генеральный директор</th>
+                    <td>Алкон</th>
+                    <td>Оклад</th>
+                  </tr>
+                  <tr>
+                    <td>Сидорова Елена Александровна</th>
+                    <td>mail@mail.ru</th>
+                    <td>8 (999) 99 99911</th>
+                    <td>Повар</th>
+                    <td>СК</th>
+                    <td>Ставка за выход</th>
+                  </tr>
+                  <tr>
+                    <td>Козлов Андрей Владимирович</th>
+                    <td>mail@mail.ru</th>
+                    <td>8 (999) 99 99911</th>
+                    <td>Повар</th>
+                    <td>Алкон</th>
+                    <td>Ставка за выход</th>
+                  </tr>
+                  <tr>
+                    <td>Михайлова Ольга Сергеевна</th>
+                    <td>mail@mail.ru</th>
+                    <td>8 (999) 99 99911</th>
+                    <td>Бариста</th>
+                    <td>СК</th>
+                    <td>Ставка за выход</th>
+                  </tr>
+                  <tr>
+                    <td>Петров Петр Петрович</th>
+                    <td>mail@mail.ru</th>
+                    <td>8 (999) 99 99911</th>
+                    <td>Генеральный директор</th>
+                    <td>Алкон</th>
+                    <td>Часовая ставка</th>
+                  </tr>
+                  <tr>
+                    <td>Сидорова Елена Александровна</th>
+                    <td>mail@mail.ru</th>
+                    <td>8 (999) 99 99911</th>
+                    <td>Повар</th>
+                    <td>СК</th>
+                    <td>Часовая ставка</th>
+                  </tr>
+                  <tr>
+                    <td>Козлов Андрей Владимирович</th>
+                    <td>mail@mail.ru</th>
+                    <td>8 (999) 99 99911</th>
+                    <td>Повар</th>
+                    <td>Алкон</th>
+                    <td>Часовая ставка</th>
+                  </tr>
+                  <tr>
+                    <td>Михайлова Ольга Сергеевна</th>
+                    <td>mail@mail.ru</th>
+                    <td>8 (999) 99 99911</th>
+                    <td>Бариста</th>
+                    <td>СК</th>
+                    <td>Часовая ставка</th>
+                  </tr>
+
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+{% endblock %}
+
+{% block scripts_footer %}
+<!-- DataTables  & Plugins -->
+<script src="static/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="static/plugins/jszip/jszip.min.js"></script>
+<script src="static/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="static/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,
+      "buttons": ["excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+{% endblock %}

@@ -7,6 +7,7 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base
 
+
 ##############################
 # BLOCK WITH DATABASE MODELS #
 ##############################
@@ -18,6 +19,12 @@ class PortalRole(str, Enum):
     ROLE_PORTAL_USER = "ROLE_PORTAL_USER"
     ROLE_PORTAL_ADMIN = "ROLE_PORTAL_ADMIN"
     ROLE_PORTAL_SUPERADMIN = "ROLE_PORTAL_SUPERADMIN"
+
+# тип начисления з/п
+# class PayType(Enum):
+#     hourly_rate = "hourly_rate"  # часовая ставка
+#     exit_rate = "exit_rate"  # ставка за выход
+#     salary = "salary"  # оклад
 
 
 class User(Base):
@@ -32,6 +39,7 @@ class User(Base):
     is_active = Column(Boolean(), default=True)
     hashed_password = Column(String, nullable=False)
     roles = Column(ARRAY(String), nullable=False)
+    # pay_type = Column(Enum(PayType), nullable=True)
 
     @property
     def is_superadmin(self) -> bool:
