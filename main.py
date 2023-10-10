@@ -123,6 +123,7 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
 
     # проверка, есть ли геоданные
     point_name: str = ""
+    answer: str = "Ответ сервера"
     if obj.message.location == None:
         answer = 'Для отправки геоданных нажмите "Отправить локацию"'
     else:
@@ -153,12 +154,13 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
             except:
                 user = None
                 answer = 'Вы не зарегистрированы в системе. Сообщите администратору.'
+                print(answer)
 
             if user:
                 # записываем визит в базу
                 body: VisitCreate = VisitCreate.parse_obj(
                     {
-                        "user_id": "233f2c27-475a-40b1-986d-b823f7dd8a9f",
+                        "user_id": user.user_id,
                         "point": point_id,
                     }
                 )
@@ -166,13 +168,15 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
                     res = await _create_new_visit(body, db)
                     print(res)
                     answer = f'Данные записаны. Местоположение: {point_name}'
+                    print(answer)
                 except:
                     answer = 'Ошибка сервера, повторите попытку'
+                    print(answer)
             # except IntegrityError as err:
             #     logger.error(err)
     data = {
         'chat_id': obj.message.chat.id,
-        'text': "answer",
+        'text': answer,
         'reply_markup': json.dumps(reply_markup)
     }
 
