@@ -115,6 +115,14 @@ async def employees_list(request: Request,  db: AsyncSession = Depends(get_db)):
             position_name = employee.position
         employee.position_name = position_name
 
+        try:
+            type_pay = await db.execute(select(TypePay).where(TypePay.id == employee.type_pay))
+            type_pay = type_pay.scalar()
+            type_pay_name = f'{type_pay.name}'
+        except:
+            type_pay_name = employee.type_pay
+        employee.type_pay_name = type_pay_name
+
 
     if token and user_id:
         return templates.TemplateResponse(

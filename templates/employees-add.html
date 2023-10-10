@@ -97,11 +97,11 @@
 <!-- InputMask -->
 <script src="static/js/imask.js"></script>
 
-<script>
+<script>  
 const element = document.getElementById('phone');
 const maskOptions = {
   mask: '+{7} (000) 000 00 00'
-};
+}; 
 const mask = IMask(element, maskOptions);
 
 // ###################
@@ -163,9 +163,9 @@ async function createUser() {
       document.getElementById("success-mg").click()
       deleteValue();
     } else {
-      document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`
-    }
-  }
+      document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`    
+    }        
+  }  
 }
 
 function validationForm(data) {
@@ -186,7 +186,7 @@ function validationForm(data) {
       if (str.test(control.value)) {
         isOK = false
         control.classList.add('is-invalid');
-        document.getElementById(`${control.id}-error`).innerHTML = "Поле может содержать только буквы и символы ()-,."
+        document.getElementById(`${control.id}-error`).innerHTML = "Поле может содержать только буквы и символы ()-,."        
       }
     }
   });
@@ -197,7 +197,7 @@ function validationForm(data) {
     data.email.classList.add('is-invalid');
     document.getElementById(`${data.email.id}-error`).innerHTML = "Такой почты не существует"
   }
-
+  
   return isOK
 }
 
@@ -238,11 +238,11 @@ function deleteValue() {
         icon: 'success',
         title: 'Сотрудник успешно добавлен'
       })
-    });
+    });    
 
     $('.toastrDefaultSuccess').click(function() {
       toastr.success('Сотрудник успешно добавлен')
-    });
+    });    
   });
 </script>
 {% endblock %}

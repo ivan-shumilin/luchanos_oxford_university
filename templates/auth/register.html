@@ -111,6 +111,9 @@ const createUserAPI = async function(data) {
       "phone": data["phone"].value,
       "password": data["password"].value,
       "passwordConfirmation": data["passwordConfirmation"].value,
+      "position": "1",
+      "point": "1",
+      "type_pay": "1"
     };
 
     let response = await fetch(url, {
