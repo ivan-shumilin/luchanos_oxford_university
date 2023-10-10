@@ -123,6 +123,7 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
     }
 
     # проверка, есть ли геоданные
+    point_name: str = ""
     if obj.message.location == None:
         answer = 'Для отправки геоданных нажмите "Отправить локацию"'
     else:
@@ -172,7 +173,7 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
             #     logger.error(err)
     data = {
         'chat_id': obj.message.chat.id,
-        'text': answer,
+        'text': "answer",
         'reply_markup': json.dumps(reply_markup)
     }
 
