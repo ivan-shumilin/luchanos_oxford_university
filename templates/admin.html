@@ -11,7 +11,7 @@
         <!-- small box -->
         <div class="small-box bg-info">
           <div class="inner">
-            <h3>50</h3>
+            <h3>{{ employees_count }}</h3>
             <p>Сотрудников</p>
           </div>
           <div class="icon">
@@ -25,7 +25,7 @@
         <!-- small box -->
         <div class="small-box bg-success">
           <div class="inner">
-            <h3>4</h3>
+            <h3>53<sup style="font-size: 20px">%</sup></h3>
             <p>Заведений</p>
           </div>
           <div class="icon">
@@ -57,12 +57,12 @@
 //       method: 'GET',
 //       headers: {
 //         'Content-Type': 'application/json;',
-//         'Authorization': `Bearer ${token}`, 
+//         'Authorization': `Bearer ${token}`,
 //       },
 //     });
 //     let result = await response.text();
 //     return result;
-// } 
+// }
 
 // // получаем информацию о пользователе
 // getInfoByUser(USER.user_id, USER.token)

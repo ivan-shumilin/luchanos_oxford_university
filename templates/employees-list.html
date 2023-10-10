@@ -29,90 +29,22 @@
 
                   </thead>
                   <tbody>
-                  <tr>
-                    <td>Иванов Иван Иванович</th>
-                    <td>mail@mail.ru</th>
-                    <td>8 (999) 99 99911</th>
-                    <td>Генеральный директор</th>
-                    <td>СК</th>
-                    <td>Оклад</th>
-                  </tr>
-                  <tr>
-                    <td>Петров Петр Петрович</th>
-                    <td>mail@mail.ru</th>
-                    <td>8 (999) 99 99911</th>
-                    <td>Генеральный директор</th>
-                    <td>Алкон</th>
-                    <td>Оклад</th>
-                  </tr>
-                  <tr>
-                    <td>Сидорова Елена Александровна</th>
-                    <td>mail@mail.ru</th>
-                    <td>8 (999) 99 99911</th>
-                    <td>Повар</th>
-                    <td>СК</th>
-                    <td>Ставка за выход</th>
-                  </tr>
-                  <tr>
-                    <td>Козлов Андрей Владимирович</th>
-                    <td>mail@mail.ru</th>
-                    <td>8 (999) 99 99911</th>
-                    <td>Повар</th>
-                    <td>Алкон</th>
-                    <td>Ставка за выход</th>
-                  </tr>
-                  <tr>
-                    <td>Михайлова Ольга Сергеевна</th>
-                    <td>mail@mail.ru</th>
-                    <td>8 (999) 99 99911</th>
-                    <td>Бариста</th>
-                    <td>СК</th>
-                    <td>Ставка за выход</th>
-                  </tr>
-                  <tr>
-                    <td>Петров Петр Петрович</th>
-                    <td>mail@mail.ru</th>
-                    <td>8 (999) 99 99911</th>
-                    <td>Генеральный директор</th>
-                    <td>Алкон</th>
-                    <td>Часовая ставка</th>
-                  </tr>
-                  <tr>
-                    <td>Сидорова Елена Александровна</th>
-                    <td>mail@mail.ru</th>
-                    <td>8 (999) 99 99911</th>
-                    <td>Повар</th>
-                    <td>СК</th>
-                    <td>Часовая ставка</th>
-                  </tr>
-                  <tr>
-                    <td>Козлов Андрей Владимирович</th>
-                    <td>mail@mail.ru</th>
-                    <td>8 (999) 99 99911</th>
-                    <td>Повар</th>
-                    <td>Алкон</th>
-                    <td>Часовая ставка</th>
-                  </tr>
-                  <tr>
-                    <td>Михайлова Ольга Сергеевна</th>
-                    <td>mail@mail.ru</th>
-                    <td>8 (999) 99 99911</th>
-                    <td>Бариста</th>
-                    <td>СК</th>
-                    <td>Часовая ставка</th>
-                  </tr>
-
+                    {% for employee in employees %}
+                      <tr>
+                        <td>{{ employee.name }} {{ employee.surname }} {{ employee.patronymic }}</th>
+                        <td>{{ employee.email }}</th>
+                        <td>{{ employee.phone }}</th>
+                        <td>{{ employee.position_name }}</th>
+                        <td>{{ employee.point_name }}</th>
+                        <td>{{ employee.type_pay }}</th>
+                      </tr>
+                    {% endfor %}
                 </table>
               </div>
-              <!-- /.card-body -->
             </div>
-            <!-- /.card -->
           </div>
-          <!-- /.col -->
         </div>
-        <!-- /.row -->
       </div>
-      <!-- /.container-fluid -->
     </section>
 {% endblock %}
 

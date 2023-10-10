@@ -14,16 +14,145 @@
           <form>
             <div class="card-body">
               <div class="form-group">
-                <input id="name" onclick="deleteError()" type="email" class="form-control" placeholder="Название">
+                <input id="name" onclick="deleteError()" type="text" class="form-control str" placeholder="Название">
+                <span id="name-error" class="error invalid-feedback"></span>
               </div>
-            </div>
-            <div class="card-footer">
-              <button type="submit" class="btn btn-primary">Добавить</button>
+
             </div>
           </form>
+          <div class="card-footer">
+            <button onclick="createPosition()" class="btn btn-primary">Добавить</button>
+            <span id="terms-error" class="error invalid-feedback" style="display: inline;"></span>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <div class="card card-warning card-outline" style="display: none;">
+    <div class="card-header">
+      <h3 class="card-title">
+        <i class="fas fa-edit"></i>
+        Уведомления
+      </h3>
+    </div>
+    <div class="card-body">
+      <button id="success-mg" type="button" class="btn btn-success toastrDefaultSuccess">
+        Должность успешно добавлена
+      </button>
+
+    <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+  </div>
 </section>
+
+<script>
+
+// ###################
+// Запросы по API   ##
+// ###################
+const createPositionAPI = async function(data) {
+    let url = '/user/position'
+    let body = {
+      "name": data["name"].value,
+    };
+
+    let response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;',
+      },
+      body: JSON.stringify(body)
+    });
+    let result = await response;
+    return result;
+}
+
+
+// ###################
+// Обработка формы  ##
+// ###################
+async function createPosition() {
+  let data = {
+    "name": document.getElementById('name'),
+  }
+
+  // проверка формы
+  let isOK = validationForm(data);
+
+  if (isOK) {
+    let res = await createPositionAPI(data);
+    if (res.ok) {
+      console.log("Пользователь создан")
+      document.getElementById("success-mg").click()
+      document.getElementById("name").value = ""
+    } else {
+      document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`
+    }
+  }
+}
+
+function validationForm(data) {
+  var isOK = true
+  var str = new RegExp("[^а-яА-Яa-zA-ZёЁ+/)/(/-/'/ /./,-]+");
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    // проверка каждого поля. все поля должны быть заполнены
+    if (!control.value & !control.classList.contains('none-true')) {
+      isOK = false
+      control.classList.add('is-invalid');
+      document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
+    }
+
+    // проверка полей, которые должны состоять опр-х символов
+    if (control.classList.contains('str')) {
+      if (str.test(control.value)) {
+        isOK = false
+        control.classList.add('is-invalid');
+        document.getElementById(`${control.id}-error`).innerHTML = "Поле может содержать только буквы и символы ()-,."
+      }
+    }
+  });
+
+  return isOK
+}
+
+function deleteError() {
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    if (control.classList.contains('is-invalid')) {
+      control.classList.remove('is-invalid');
+    }
+  });
+  document.getElementById('terms-error').innerHTML = ""
+}
+
+
+</script>
+
 {% endblock %}
+
+{% block scripts_footer %}
+<script>
+  $(function() {
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+
+    $('.swalDefaultSuccess').click(function() {
+      Toast.fire({
+        icon: 'success',
+        title: 'Должность успешно добавлена'
+      })
+    });
+
+    $('.toastrDefaultSuccess').click(function() {
+      toastr.success('Должность успешно добавлена')
+    });
+  });
+</script>
+{% endblock %}
+
+

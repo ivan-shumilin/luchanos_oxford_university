@@ -30,7 +30,7 @@
   <!-- BS Stepper -->
   <link rel="stylesheet" href="static/plugins/bs-stepper/css/bs-stepper.min.css">
   <!-- dropzonejs -->
-  <link rel="stylesheet" href="static/plugins/dropzone/min/dropzone.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', path='plugins/dropzone/min/dropzone.min.css') }}">
 
 </head>
 
@@ -62,7 +62,7 @@
 <!-- BS-Stepper -->
 <script src="static/plugins/bs-stepper/js/bs-stepper.min.js"></script>
 <!-- dropzonejs -->
-<script src="static/plugins/dropzone/min/dropzone.min.js"></script>
+<script src="{{ url_for('static', path='plugins/dropzone/min/dropzone.min.js') }}"></script>
 
 <!-- Page specific script -->
 

@@ -26,7 +26,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr>
+              <!-- <tr>
                 <td>Алкон</td>
                 <td>Ленинградский проспект 72к3</td>
                 <td>55.805196, 37.520609</td>
@@ -37,19 +37,22 @@
                 <td>Большой бульвар, 46с1</td>
                 <td>55.685111, 37.350313</td>
                 <td>30</td>
-              </tr>          
+              </tr>           -->
+              {% for point in points %}
+                <tr>
+                  <td>{{ point.name }}</td>
+                  <td>{{ point.address }}</td>
+                  <td>{{ point.coordinates }}</td>
+                  <td>{{ point.users_count }}</td>
+                </tr>
+              {% endfor %}  
               </tbody>
             </table>
           </div>
-          <!-- /.card-body -->
         </div>
-        <!-- /.card -->
       </div>
-      <!-- /.col -->
     </div>
-    <!-- /.row -->
   </div>
-  <!-- /.container-fluid -->
 </section>
 {% endblock %}
 

@@ -1,8 +1,8 @@
 import uuid
-from enum import Enum
+from datetime import datetime
 
-from sqlalchemy import Column
-from sqlalchemy import String, Integer, Boolean
+from sqlalchemy import Column, ForeignKey, Enum
+from sqlalchemy import String, Integer, Boolean, DateTime
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base
@@ -20,11 +20,9 @@ class PortalRole(str, Enum):
     ROLE_PORTAL_ADMIN = "ROLE_PORTAL_ADMIN"
     ROLE_PORTAL_SUPERADMIN = "ROLE_PORTAL_SUPERADMIN"
 
+
 # тип начисления з/п
-# class PayType(Enum):
-#     hourly_rate = "hourly_rate"  # часовая ставка
-#     exit_rate = "exit_rate"  # ставка за выход
-#     salary = "salary"  # оклад
+
 
 
 class User(Base):
@@ -34,12 +32,16 @@ class User(Base):
     name = Column(String, nullable=False)
     surname = Column(String, nullable=False)
     patronymic = Column(String, nullable=True)
+    tg_username = Column(String, nullable=True)
     email = Column(String, nullable=False, unique=True)
     phone = Column(String, nullable=False, unique=True)
     is_active = Column(Boolean(), default=True)
     hashed_password = Column(String, nullable=False)
     roles = Column(ARRAY(String), nullable=False)
-    # pay_type = Column(Enum(PayType), nullable=True)
+    position = Column(Integer, ForeignKey("position.id"))
+    point = Column(Integer, ForeignKey("point.id"))
+    type_pay = Column(Integer, ForeignKey("type_pay.id"))
+
 
     @property
     def is_superadmin(self) -> bool:
@@ -56,3 +58,41 @@ class User(Base):
     def remove_admin_privileges_from_model(self):
         if self.is_admin:
             return {role for role in self.roles if role != PortalRole.ROLE_PORTAL_ADMIN}
+
+
+class TypePay(Base):
+    __tablename__ = "type_pay"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    is_active = Column(Boolean(), default=True)
+
+
+class Position(Base):
+    __tablename__ = "position"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    is_active = Column(Boolean(), default=True)
+
+
+class Point(Base):
+    __tablename__ = "point"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    address = Column(String, nullable=False)
+    coordinates = Column(String, nullable=False)
+    is_active = Column(Boolean(), default=True)
+
+
+class Visit(Base):
+    __tablename__ = "visit"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    is_active = Column(Boolean(), default=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"))
+    point = Column(Integer, ForeignKey("point.id"))
+    created_at = Column(DateTime, default=datetime.now)
+
+

@@ -24,35 +24,13 @@
               </tr>
               </thead>
               <tbody>
-              
-              <tr>
-                <td>Генеральный директор</td>
-                <td>1</td>
-              </tr>
-              <tr>
-                <td>Бухгалтер</td>
-                <td>2</td>
-              </tr>
-              <tr>
-                <td>Менеджер по продажам</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td>Бариста</td>
-                <td>1</td>
-              </tr>
-              <tr>
-                <td>Повар х/ц</td>
-                <td>1</td>
-              </tr>
-              <tr>
-                <td>Раннер</td>
-                <td>1</td>
-              </tr>
-              <tr>
-                <td>Повар г/ц</td>
-                <td>10</td>
-              </tr>
+              {% for position in positions %}
+                <tr>
+                  <td>{{ position.name }}</td>
+                  <td>1</td>
+                </tr>
+              {% endfor %}
+
               </tbody>
             </table>
           </div>
@@ -66,6 +44,7 @@
   </div>
   <!-- /.container-fluid -->
 </section>
+
 {% endblock %}
 
 {% block scripts_footer %}

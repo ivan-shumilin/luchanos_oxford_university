@@ -14,7 +14,6 @@ services:
       - custom
     volumes:
       - db-data:/var/lib/postgresql/data
-    user: root
   luchanos_oxford_university_app:
     container_name: luchanos_oxford_university_app
     image: luchanos_oxford_university_app # Specify the name of the Docker image to be built

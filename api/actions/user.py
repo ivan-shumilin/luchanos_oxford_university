@@ -18,21 +18,29 @@ async def _create_new_user(body: UserCreate, session) -> ShowUser:
             name=body.name,
             surname=body.surname,
             patronymic=body.patronymic,
+            tg_username=body.tg_username,
             email=body.email,
             phone=body.phone,
             hashed_password=Hasher.get_password_hash(body.password),
             roles=[
                 PortalRole.ROLE_PORTAL_USER,
             ],
+            position=body.position,
+            point=body.point,
+            type_pay=body.type_pay,
         )
         return ShowUser(
             user_id=user.user_id,
             name=user.name,
             surname=user.surname,
             patronymic=user.patronymic,
+            tg_username=user.tg_username,
             email=user.email,
             phone=user.phone,
             is_active=user.is_active,
+            position=user.position,
+            point=user.point,
+            type_pay=user.type_pay,
         )
 
 

@@ -1,6 +1,7 @@
 import re
 import uuid
 from typing import Optional
+from datetime import datetime
 
 from fastapi import HTTPException
 from pydantic import BaseModel
@@ -29,18 +30,26 @@ class ShowUser(TunedModel):
     name: str
     surname: str
     patronymic: str
+    tg_username: str
     email: EmailStr
     phone: str
     is_active: bool
+    position: int
+    point: int
+    type_pay: int
 
 
 class UserCreate(BaseModel):
     name: str
     surname: str
     patronymic: str
+    tg_username: str
     email: EmailStr
     phone: str
     password: str
+    position: int
+    point: int
+    type_pay: int
 
     @validator("name")
     def validate_name(cls, value):
@@ -117,3 +126,52 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     user_id: uuid.UUID
+
+
+class ShowPosition(TunedModel):
+    id: int
+    name: str
+    is_active: bool
+
+
+class PositionCreate(BaseModel):
+    name: str
+
+
+class PointCreate(BaseModel):
+    name: str
+    address: str
+    coordinates: str
+
+
+class ShowPoint(TunedModel):
+    id: int
+    name: str
+    address: str
+    coordinates: str
+    is_active: bool
+
+
+
+class TypePayCreate(TunedModel):
+    name: str
+
+
+class TypePayShow(TunedModel):
+    id: int
+    name: str
+    is_active: bool
+
+
+class VisitCreate(TunedModel):
+    user_id: uuid.UUID
+    point: int
+
+
+class VisitShow(TunedModel):
+    id: int
+    user_id: uuid.UUID
+    point: int
+    created_at: datetime
+    is_active: bool
+
