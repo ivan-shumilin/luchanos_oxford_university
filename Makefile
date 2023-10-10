@@ -4,7 +4,7 @@ up:
 	sudo docker compose -f docker-compose-local.yaml up -d
 
 down:
-	docker compose -f docker-compose-local.yaml down --remove-orphans
+	sudo docker compose -f docker-compose-local.yaml down --remove-orphans
 
 up_ci:
 	docker compose -f docker-compose-ci.yaml up -d
