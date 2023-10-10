@@ -103,6 +103,7 @@ def get_point(latitude: float, longitude: float) -> Point:
 
 @app.post("/")
 async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
+    global answer
     result = await request.json()
     obj = Answer.parse_obj(result)
     print(obj)
