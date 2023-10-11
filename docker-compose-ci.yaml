@@ -8,12 +8,12 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
       - custom
-#    volumes:
-#      - db-data:/var/lib/postgresql/data
   luchanos_oxford_university_app:
     container_name: luchanos_oxford_university_app
     image: luchanos_oxford_university_app # Specify the name of the Docker image to be built
@@ -82,7 +82,7 @@ networks:
   custom:
     driver: bridge
 volumes:
-  db-data:
+  pgdata:
   grafana-data:
   grafana-config:
   prometheus-data:
