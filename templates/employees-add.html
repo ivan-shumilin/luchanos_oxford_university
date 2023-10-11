@@ -170,7 +170,7 @@ async function createUser() {
 
 function validationForm(data) {
   var isOK = true
-  var str = new RegExp("[^а-яА-Яa-zA-ZёЁ+/)/(/-/'/ /./,-]+");
+  var str = new RegExp("[^а-яА-Яa-zA-ZёЁ+/)/(/-/'/ /./,-]+_");
   var strEmail = new RegExp("[^a-zA-Z0-9/-/./@/_-]+");
   const formControls = document.querySelectorAll('.form-control');
   formControls.forEach(control => {
@@ -181,14 +181,14 @@ function validationForm(data) {
       document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
     }
 
-    // проверка полей, которые должны состоять опр-х символов
-    if (control.classList.contains('str')) {
-      if (str.test(control.value)) {
-        isOK = false
-        control.classList.add('is-invalid');
-        document.getElementById(`${control.id}-error`).innerHTML = "Поле может содержать только буквы и символы ()-,."        
-      }
-    }
+    // // проверка полей, которые должны состоять опр-х символов
+    // if (control.classList.contains('str')) {
+    //   if (str.test(control.value)) {
+    //     isOK = false
+    //     control.classList.add('is-invalid');
+    //     document.getElementById(`${control.id}-error`).innerHTML = "Поле может содержать только буквы и символы ()-,."        
+    //   }
+    // }
   });
 
   // // проверка почты
