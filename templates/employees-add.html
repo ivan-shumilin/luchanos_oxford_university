@@ -38,7 +38,7 @@
                 <span id="phone-error" class="error invalid-feedback"></span>
               </div>
               <div class="form-group">
-                <select id="point" onclick="deleteError()" class="form-control" placeholder="Должность">
+                <select id="point" onclick="deleteError()" class="form-control" placeholder="Заведение">
                   <option selected disabled hidden>Заведение</option>
                   {% for point in points %}
                     <option value="{{ point.id }}">{{ point.name }}</option>

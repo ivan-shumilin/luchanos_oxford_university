@@ -22,7 +22,7 @@
                 <span id="address-error" class="error invalid-feedback"></span>
               </div>
               <div class="form-group">
-                <input id="coordinates" onclick="deleteError()" type="text" class="form-control str none-true" placeholder="Координаты">
+                <input id="coordinates" onclick="deleteError()" type="text" class="form-control str none-true" placeholder='Координаты в формате "XX.XXXXXX:XX.XXXXXX"'>
                 <span id="coordinates-error" class="error invalid-feedback"></span>
               </div>
             </div>
@@ -51,8 +51,16 @@
   </div>
 </section>
 
+<!-- InputMask -->
+<script src="static/js/imask.js"></script>
 
 <script>  
+const element = document.getElementById('coordinates');
+const maskOptions = {
+  mask: '00.000000:00.000000'
+}; 
+const mask = IMask(element, maskOptions);
+
 
   // ###################
   // Запросы по API   ##
