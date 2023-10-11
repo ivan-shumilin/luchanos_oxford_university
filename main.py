@@ -101,6 +101,48 @@ LOCATIONS = [
 def get_point(latitude: float, longitude: float) -> Point:
     return Point(latitude=latitude, longitude=longitude)
 
+
+async def check_user(obj, db):
+    # проверяем есть ли пользователь в системе приславший локацию
+    received_username = obj.message.from_tg.username
+    answer: str | None = None
+    try:
+        user = await db.execute(select(User).where(User.tg_username == received_username))
+        user = user.scalar()        
+    except:
+        user = None
+
+    if user is None:
+        answer = 'Вы не зарегистрированы в системе. Свяжитесь с администратором для регистрации.'
+        print(answer)
+
+    return user, answer
+
+
+async def check_dist(obj, db):
+    answer: str | None = None
+    target_point = get_point(obj.message.location.latitude, obj.message.location.longitude)
+    points = await db.execute(select(Points))
+    points = points.scalars().all()
+
+    for point in points:
+        try:
+            latitude = point.coordinates.split(":")[0]
+            longitude = point.coordinates.split(":")[1]
+        except:
+            continue
+
+        dist = int(distance(
+            target_point,
+            get_point(latitude, longitude)
+        ).m)
+        if dist < 500:
+            return point, answer
+
+    answer = f'Не находитесь на объекте'
+    return None, answer
+
+
 @app.post("/")
 async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
     result = await request.json()
@@ -125,52 +167,26 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
     point_name: str = ""
     answer: str = "Ответ сервера"
     if obj.message.location == None:
-        answer = 'Для отправки геоданных нажмите "Отправить локацию"'
+        answer = 'Для отправки геоданных нажмите кнопку "Отправить локацию"'
     else:
-        target_point = get_point(obj.message.location.latitude, obj.message.location.longitude)
-        points = await db.execute(select(Points))
-        points = points.scalars().all()
-        point_id = None
-        for point in points:
-            latitude = point.coordinates.split(":")[0]
-            longitude = point.coordinates.split(":")[1]
-            dist = int(distance(
-                    target_point,
-                    get_point(latitude, longitude)
-                ).m)
-            if dist < 500:
-                point_id = point.id
-                point_name = point.name
-
-        if not point_id:
-            answer = f'Не находитесь на объекте'
-        else:
-            # проверяем есть ли пользователь в системе приславший локацию
-            received_username = obj.message.from_tg.username
-
-            try:
-                user = await db.execute(select(User).where(User.tg_username == received_username))
-                user = user.scalar()
-            except:
-                user = None
-                answer = 'Вы не зарегистрированы в системе. Сообщите администратору.'
-                print(answer)
-
-            if user:
+        user, answer = await check_user(obj, db)
+        if user:
+            point, answer = await check_dist(obj, db)
+            if point:
                 # записываем визит в базу
                 body: VisitCreate = VisitCreate.parse_obj(
                     {
                         "user_id": user.user_id,
-                        "point": point_id,
+                        "point": point.id,
                     }
                 )
                 try:
                     res = await _create_new_visit(body, db)
                     print(res)
-                    answer = f'Данные записаны. Местоположение: {point_name}'
+                    answer = f'Данные записаны. Местоположение: {point.name}'
                     print(answer)
                 except:
-                    answer = 'Ошибка сервера, повторите попытку'
+                    answer = 'Возникла ошибка при записи данных. Попробуйте еще раз.'
                     print(answer)
             # except IntegrityError as err:
             #     logger.error(err)
