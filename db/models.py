@@ -93,6 +93,4 @@ class Visit(Base):
     is_active = Column(Boolean(), default=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"))
     point = Column(Integer, ForeignKey("point.id"))
-    created_at = Column(DateTime, default=datetime.now)
-
-
+    created_at = Column(DateTime, default=datetime.utcnow)

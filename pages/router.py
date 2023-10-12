@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import APIRouter, Request, Depends, Query
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
@@ -259,11 +261,8 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
             point = v.point
         v.point_name = point
 
-    # users = await db.execute(select(User))
-    # users = users.scalars().all()
-
     # Преобразование данных в DataFrame
-    df = pd.DataFrame([(str(v.created_at.date()), str(v.full_name), str(v.point_name), v.created_at.time()) for v in visits],
+    df = pd.DataFrame([(str(v.created_at.date()), str(v.full_name), str(v.point_name), v.created_at) for v in visits],
                       columns=['date', 'user', 'point', 'time'])
 
     # Группировка по дате и пользователю
@@ -272,6 +271,8 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
     # Получение самых ранних и поздних времен для каждой группы
     result = grouped.agg({'time': ['min', 'max'], 'point': 'first'})
 
+    DELTA_MOSCOW_TIME = datetime.timedelta(hours=3)
+
     # Преобразование результата в список словарей
     output = []
     for (date, user), row in result.iterrows():
@@ -279,16 +280,10 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
             'date': date,
             'full_name': user,
             'point': str(row['point']['first']),
-            'min_time': row[('time', 'min')],
-            'max_time': row[('time', 'max')],
+            'min_time': row[('time', 'min')] + DELTA_MOSCOW_TIME,
+            'max_time': row[('time', 'max')] + DELTA_MOSCOW_TIME,
             'total_hours': row[('time', 'max')].hour - row[('time', 'min')].hour,
         })
-
-    # Вывод результата
-    print(output)
-
-
-
 
     if token and user_id:
         return templates.TemplateResponse(
