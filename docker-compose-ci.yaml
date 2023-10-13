@@ -3,13 +3,12 @@ services:
   db:
     container_name: "db"
     image: postgres:14.1-alpine
-    restart: always
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
-    volumes:
-      - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
@@ -83,7 +82,7 @@ networks:
   custom:
     driver: bridge
 volumes:
-  pgdata:
+  postgres_data:
   grafana-data:
   grafana-config:
   prometheus-data:
