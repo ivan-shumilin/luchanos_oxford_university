@@ -17,7 +17,7 @@ restore:
 dump_ci:
 	pg_dump -U postgres -h 37.140.195.68 -Fc postgres > ./$(DATE)__backup.sql
 
-restore:
+restore_ci:
 	pg_restore -U postgres -h 37.140.195.68 -d postgres -c backup.sql
 
 up_ci:

@@ -32,3 +32,26 @@ from myapp import mymodel
 
 Локально:
 ```ssh -R 80:localhost:8000 nokey@localhost.run```
+
+Вознкла проблема, при создании init миграции она была пустая.
+удалить базу:
+sudo dropdb -U postgres -h 0.0.0.0 postgres
+нужно убить процессы с пользователем shumilin
+sudo lsof -i :5432
+
+Потом создать базу
+createdb -U postgres -h 0.0.0.0 postgres
+
+И сделать первую миграцию init:
+```
+alembic init migrations
+```
+При make makemigrations в файлу alembic.ini должно быть раскоментировано 
+# local
+sqlalchemy.url = postgresql://postgres:postgres@0.0.0.0:5432/postgres
+
+Поменять .env
+- Дальше вводим: ```alembic revision --autogenerate -m "comment"``` - делается при любых изменениях моделей
+- Будет создана миграция
+- Дальше вводим: ```alembic upgrade heads```
+
