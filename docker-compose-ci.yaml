@@ -22,6 +22,7 @@ services:
     environment:
       REAL_DATABASE_URL: "postgresql+asyncpg://postgres:postgres@db:5432/postgres"
       SENTRY_URL: "https://0045d00dbb7f57596547bf81db33df12@o4506038814048256.ingest.sentry.io/4506038895247360"
+      SENTRY_URL2: "https://0045d00dbb7f57596547bf81db33df12@o4506038814048256.ingest.sentry.io/4506038895247360"
       APP_PORT: "8000"
       TG_API: "6688209134:AAGEDFTzRu2rmfo2MIPdZzKEII9MktFXfYY"
     build:
