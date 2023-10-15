@@ -3,6 +3,7 @@ services:
   db:
     container_name: "db"
     image: postgres:14.1-alpine
+    restart: always
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
     environment:
