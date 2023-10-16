@@ -25,7 +25,7 @@ from api.schemas import UpdateUserRequest
 from api.schemas import UserCreate
 from db.models import User, Position
 from db.session import get_db
-from api.actions.scripts import send_messang
+from api.actions.scripts import send_messang, restore_db
 
 logger = getLogger(__name__)
 
@@ -139,12 +139,18 @@ async def get_user_by_id(
     user_id: UUID,
     db: AsyncSession = Depends(get_db),
 ) -> ShowUser:
+    error: bool = False
     try:
         user = await _get_user_by_id(user_id, db)
     except:
-        await send_messang()
+        await send_messang("Ошибка сервера")
+        date = await restore_db()
+        raise HTTPException(
+            status_code=404, detail=f"User with id {user_id} not found."
+        )
     if user is None:
-        await send_messang()
+        await send_messang("Пользователь не найден")
+        date = await restore_db()
 
         raise HTTPException(
             status_code=404, detail=f"User with id {user_id} not found."
