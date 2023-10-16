@@ -15,7 +15,8 @@ restore:
 	pg_restore -U postgres -h 0.0.0.0 -d postgres -c backup.sql
 
 dump_ci:
-	pg_dump -U postgres -h 37.140.195.68 -Fc postgres > ./dump/$(DATE)__backup.sql
+	# pg_dump -U postgres -h 37.140.195.68 -Fc postgres > ./dump/$(DATE)__backup.sql
+	/usr/bin/pg_dump -U postgres -h 37.140.195.68 -Fc postgres > /root/MyProjects/luchanos_oxford_university/dump/$(DATE)__backup.sql
 
 restore_ci:
 	pg_restore -U postgres -h 37.140.195.68 -d postgres -c backup.sql
