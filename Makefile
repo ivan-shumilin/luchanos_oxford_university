@@ -19,7 +19,7 @@ dump_ci:
 	/usr/bin/pg_dump -U postgres -h 37.140.195.68 -Fc postgres > /root/MyProjects/luchanos_oxford_university/dump/$(DATE)__backup.sql
 
 restore_ci:
-	pg_restore -U postgres -h 37.140.195.68 -d postgres -c backup.sql
+	pg_restore -U postgres -h 37.140.195.68 -d postgres -c dump/2023-10-16__15-16__backup.sql
 
 up_ci:
 	docker compose -f docker-compose-ci.yaml up -d

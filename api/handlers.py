@@ -25,6 +25,7 @@ from api.schemas import UpdateUserRequest
 from api.schemas import UserCreate
 from db.models import User, Position
 from db.session import get_db
+from api.actions.scripts import send_messang
 
 logger = getLogger(__name__)
 
@@ -137,13 +138,15 @@ async def revoke_admin_privilege(
 async def get_user_by_id(
     user_id: UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user_from_token),
 ) -> ShowUser:
     user = await _get_user_by_id(user_id, db)
     if user is None:
+        await send_messang()
+
         raise HTTPException(
             status_code=404, detail=f"User with id {user_id} not found."
         )
+
     return user
 
 
