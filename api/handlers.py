@@ -139,7 +139,10 @@ async def get_user_by_id(
     user_id: UUID,
     db: AsyncSession = Depends(get_db),
 ) -> ShowUser:
-    user = await _get_user_by_id(user_id, db)
+    try:
+        user = await _get_user_by_id(user_id, db)
+    except:
+        await send_messang()
     if user is None:
         await send_messang()
 
