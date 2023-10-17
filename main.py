@@ -104,7 +104,7 @@ def get_point(latitude: float, longitude: float) -> Point:
 
 async def check_user(obj, db):
     # проверяем есть ли пользователь в системе приславший локацию
-    received_username = obj.message.from_tg.username
+    received_username = f'@{obj.message.from_tg.username}'
     answer: str | None = None
     try:
         user = await db.execute(select(User).where(User.tg_username == received_username))
