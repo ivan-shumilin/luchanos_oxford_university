@@ -33,8 +33,8 @@
                         <td>{{ visit.date  }}</td>
                         <td>{{ visit.full_name }}</td>
                         <td>{{ visit.point }}</td>
-                        <td>{{ visit.min_time.strftime('%H:%M') }}</td>
-                        <td>{{ visit.max_time.strftime('%H:%M') }}</td>
+                        <td>{{ visit.min_time }}:00</td>
+                        <td>{{ visit.max_time }}:00</td>
                         <td>{{ visit.total_hours }}</td>
                       </tr>
                     {% endfor %}             

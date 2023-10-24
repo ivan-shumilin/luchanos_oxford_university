@@ -276,13 +276,18 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
     # Преобразование результата в список словарей
     output = []
     for (date, user), row in result.iterrows():
+        min_time = (row[('time', 'min')] + DELTA_MOSCOW_TIME).hour + 1
+        max_time = (row[('time', 'max')] + DELTA_MOSCOW_TIME).hour
+        if min_time > max_time:
+            max_time = min_time
+
         output.append({
             'date': date,
             'full_name': user,
             'point': str(row['point']['first']),
-            'min_time': row[('time', 'min')] + DELTA_MOSCOW_TIME,
-            'max_time': row[('time', 'max')] + DELTA_MOSCOW_TIME,
-            'total_hours': row[('time', 'max')].hour - row[('time', 'min')].hour,
+            'min_time': min_time,
+            'max_time': max_time,
+            'total_hours': max_time - min_time,
         })
 
     if token and user_id:
