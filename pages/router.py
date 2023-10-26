@@ -55,6 +55,14 @@ async def job_title_list(request: Request, token: str, user_id: str, db: AsyncSe
     positions = await db.execute(select(Position))
     positions = positions.scalars().all()
 
+    for position in positions:
+        try:
+            users = await db.execute(select(User).where(User.position == position.id))
+            users_count = len(users.scalars().all())
+        except:
+            users_count = 0
+        position.users_count = users_count
+
     return templates.TemplateResponse(
         "job-title-list.html",
         {
