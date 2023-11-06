@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.actions.auth import get_current_user_from_token
 from api.actions.point import _create_new_point, _create_new_type_pay
 from api.actions.position import _create_new_position
-from api.actions.user import _create_new_user
+from api.actions.user import _create_new_user, _get_user_by_email, _get_user_by_phone
 from api.actions.user import _delete_user
 from api.actions.user import _get_user_by_id
 from api.actions.user import _update_user
@@ -34,11 +34,27 @@ user_router = APIRouter()
 
 @user_router.post("/", response_model=ShowUser)
 async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> ShowUser:
+    user = await _get_user_by_email(body.email, db)
+    if user is not None:
+        raise HTTPException(
+            status_code=404,
+            detail={"name": f"Почта {body.email} уже используется."}
+        )
+    user = await _get_user_by_phone(body.phone, db)
+    if user is not None:
+        raise HTTPException(
+            status_code=404,
+            detail={"name": f"Телефон {body.phone} уже используется."}
+        )
     try:
         return await _create_new_user(body, db)
     except IntegrityError as err:
         logger.error(err)
-        raise HTTPException(status_code=503, detail=f"Database error: {err}")
+        raise HTTPException(
+            status_code=503,
+            detail={"name": f"Database error: {err}"}
+        )
+
 
 
 @user_router.delete("/", response_model=DeleteUserResponse)

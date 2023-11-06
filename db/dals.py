@@ -78,6 +78,15 @@ class UserDAL:
         if user_row is not None:
             return user_row[0]
 
+
+    async def get_user_by_phone(self, phone: str) -> Union[User, None]:
+        query = select(User).where(User.phone == phone)
+        res = await self.db_session.execute(query)
+        user_row = res.fetchone()
+        if user_row is not None:
+            return user_row[0]
+
+
     async def update_user(self, user_id: UUID, **kwargs) -> Union[UUID, None]:
         query = (
             update(User)

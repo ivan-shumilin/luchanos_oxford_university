@@ -74,6 +74,26 @@ async def _get_user_by_id(user_id, session) -> Union[User, None]:
             return user
 
 
+async def _get_user_by_email(email, session) -> Union[User, None]:
+    async with session.begin():
+        user_dal = UserDAL(session)
+        user = await user_dal.get_user_by_email(
+            email=email,
+        )
+        if user is not None:
+            return user
+
+
+async def _get_user_by_phone(phone, session) -> Union[User, None]:
+    async with session.begin():
+        user_dal = UserDAL(session)
+        user = await user_dal.get_user_by_phone(
+            phone=phone,
+        )
+        if user is not None:
+            return user
+
+
 def check_user_permissions(target_user: User, current_user: User) -> bool:
     if PortalRole.ROLE_PORTAL_SUPERADMIN in current_user.roles:
         raise HTTPException(
