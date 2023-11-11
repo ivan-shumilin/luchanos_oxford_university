@@ -8,7 +8,7 @@ services:
       - ./postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=postgresASDEWVEWFWFVDSVEW
       - POSTGRES_DB=postgres
     ports:
       - "5432:5432"
@@ -23,7 +23,7 @@ services:
       - db
       - alembic_migrations
     environment:
-      REAL_DATABASE_URL: "postgresql+asyncpg://postgres:postgres@db:5432/postgres"
+      REAL_DATABASE_URL: "postgresql+asyncpg://postgres:postgresASDEWVEWFWFVDSVEW@db:5432/postgres"
       SENTRY_URL: "https://0045d00dbb7f57596547bf81db33df12@o4506038814048256.ingest.sentry.io/4506038895247360"
       APP_PORT: "8000"
       TG_API: "6688209134:AAGEDFTzRu2rmfo2MIPdZzKEII9MktFXfYY"
@@ -41,8 +41,8 @@ services:
     depends_on:
       - db
     environment:
-      ALEMBIC_DATABASE_URL: "postgresql://postgres:postgres@db/postgres"
-      REAL_DATABASE_URL: "postgresql+asyncpg://postgres:postgres@db:5432/postgres"
+      ALEMBIC_DATABASE_URL: "postgresql://postgres:postgresASDEWVEWFWFVDSVEW@db/postgres"
+      REAL_DATABASE_URL: "postgresql+asyncpg://postgres:postgresASDEWVEWFWFVDSVEW@db:5432/postgres"
       SENTRY_URL: "https://2d340f23a0454ea0a23a0d2d6fbe2e1f@o4504938483875840.ingest.sentry.io/4504939751538688"
       APP_PORT: "8001"
     build:
