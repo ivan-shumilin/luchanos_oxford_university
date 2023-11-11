@@ -5,9 +5,9 @@ services:
     image: postgres:14.1-alpine
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres_new
+      - POSTGRES_PASSWORD=postgres_new
+      - POSTGRES_DB=postgres_new
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
