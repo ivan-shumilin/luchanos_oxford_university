@@ -5,7 +5,7 @@ env = Env()
 
 REAL_DATABASE_URL = env.str(
     "REAL_DATABASE_URL",
-    default="postgresql+asyncpg://postgres:postgres@0.0.0.0:5432/postgres",
+    default="postgresql+asyncpg://admin:asDSqwBF23*@79.174.88.60:19832/time_tracking",
 )  # connect string for the real database
 APP_PORT = env.int("APP_PORT")
 

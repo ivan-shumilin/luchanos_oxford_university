@@ -3,14 +3,13 @@ import os
 
 import requests
 
-# from dotenv import load_dotenv
+from envparse import Env
 
-
-# load_dotenv()
-# TG_API = os.getenv('BOT_API_KEY')
-# whook = 'hr.petrushkagroup.ru'
+env = Env()
+# TG_API = env.str("BOT_API_KEY", default="secret_key")
+WHOOK = 'hr.petrushkagroup.ru'
 TG_API = "6688209134:AAGEDFTzRu2rmfo2MIPdZzKEII9MktFXfYY"
-WHOOK = "77a0893f1bb21a.lhr.life"
+# WHOOK = "eca594b83ea62a.lhr.life"
 
 if __name__ == "__main__":
     r = requests.get(f'https://api.telegram.org/bot{TG_API}/setWebhook?url=https://{WHOOK}/')
