@@ -80,7 +80,7 @@ pg_restore --clean --dbname=postgresql://admin:asDSqwBF23*@79.174.88.60:19832/ti
 
 ## ENVs
 
-Всего должно быть определено 3 среды в папке env_vars:
+Всего должно быть определено 3 среды в папке ./env_vars:
 
 1. **.env** 
 
