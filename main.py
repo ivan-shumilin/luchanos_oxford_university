@@ -107,8 +107,10 @@ async def check_user(obj, db):
     received_username = f'@{obj.message.from_tg.username}'
     answer: str | None = None
     try:
-        user = await db.execute(select(User).where(User.tg_username == received_username))
-        user = user.scalar()        
+        query = select(User).where(User.tg_username == received_username)
+        user = await db.scalar(query)
+        # user = await db.execute(select(User).where(User.tg_username == received_username))
+        # user = user.scalar()
     except:
         user = None
 
