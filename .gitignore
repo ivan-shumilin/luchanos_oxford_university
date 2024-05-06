@@ -106,6 +106,7 @@ env_vars/.env
 env_vars/postgres.env
 env_vars/postgres-local.env
 .venv
+.env
 env/
 venv/
 ENV/

@@ -64,6 +64,15 @@ async def _update_user(
         return updated_user_id
 
 
+async def _restore_user(user_id: UUID, session):
+    async with session.begin():
+        user_dal = UserDAL(session)
+        updated_user_id = await user_dal.restore_user(
+            user_id=user_id
+        )
+        return updated_user_id
+
+
 async def _get_user_by_id(user_id, session) -> Union[User, None]:
     async with session.begin():
         user_dal = UserDAL(session)
@@ -84,6 +93,16 @@ async def _get_user_by_email(email, session) -> Union[User, None]:
             return user
 
 
+async def _get_user_by_tg(tg_username, session) -> Union[User, None]:
+    async with session.begin():
+        user_dal = UserDAL(session)
+        user = await user_dal.get_user_by_tg(
+            tg_username=tg_username,
+        )
+        if user is not None:
+            return user
+
+
 async def _get_user_by_phone(phone, session) -> Union[User, None]:
     async with session.begin():
         user_dal = UserDAL(session)
@@ -95,7 +114,7 @@ async def _get_user_by_phone(phone, session) -> Union[User, None]:
 
 
 def check_user_permissions(target_user: User, current_user: User) -> bool:
-    if PortalRole.ROLE_PORTAL_SUPERADMIN in current_user.roles:
+    if PortalRole.ROLE_PORTAL_SUPERADMIN in target_user.roles:
         raise HTTPException(
             status_code=406, detail="Superadmin cannot be deleted via API."
         )

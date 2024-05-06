@@ -7,7 +7,7 @@ env = Env()
 REAL_DATABASE_URL = env.str(
     "REAL_DATABASE_URL",
 )  # connect string for the real database
-APP_PORT = env.str("APP_PORT")
+APP_PORT = env.int("APP_PORT")
 
 SECRET_KEY: str = env.str("SECRET_KEY")
 ALGORITHM: str = env.str("ALGORITHM")

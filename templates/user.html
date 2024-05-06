@@ -1,0 +1,299 @@
+{% extends "nav.html" %}
+{% block title %} Сотрудник {{ employee.name }} {{ employee.surname }} {{ employee.patronymic }} {% endblock %}
+{% block title_page %}Сотрудник {{ employee.name }} {{ employee.surname }} {{ employee.patronymic }} {% endblock %}
+{% block user_name %}User name{% endblock %}
+{% block main %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Информация о сотруднике</h3>
+          </div>
+
+          <form>
+
+           <div class="card-body">
+
+              <div class="form-group">
+                <input id="name" onclick="deleteError()" type="text" class="form-control clear" placeholder="Имя"
+                 value="{{ employee.name }}">
+                <span id="name-error" class="error invalid-feedback"></span>
+              </div>
+
+              <div class="form-group">
+                <input id="surname" onclick="deleteError()" type="text" class="form-control str clear" placeholder="Фамилия"
+                 value="{{ employee.surname }}">
+                <span id="surname-error" class="error invalid-feedback"></span>
+              </div>
+
+              <div class="form-group">
+                <input id="patronymic" onclick="deleteError()" type="text" class="form-control str clear none-true" placeholder="Отчество"
+                value="{{ employee.patronymic }}">
+                <span id="patronymic-error" class="error invalid-feedback"></span>
+              </div>
+
+              <div class="form-group">
+                <input id="tg_username" onclick="deleteError()" type="text" class="form-control str clear" placeholder="Username в телеграме"
+                value="{{ employee.tg_username }}">
+                <span id="tg_username-error" class="error invalid-feedback"></span>
+              </div>
+
+              <div class="form-group">
+                <input id="email" onclick="deleteError()" type="email" class="form-control clear" placeholder="Email"
+                value="{{ employee.email }}">
+                <span id="email-error" class="error invalid-feedback"></span>
+              </div>
+
+              <div class="form-group">
+                <input id="phone" onclick="deleteError()" type="phone" class="form-control clear" placeholder="Телефон"
+                value="{{ employee.phone }}">
+                <span id="phone-error" class="error invalid-feedback"></span>
+              </div>
+
+              <div class="form-group">
+                <select id="point" onclick="deleteError()" class="form-control clear" placeholder="Заведение">
+                      {% for point in points %}
+                        {% if employee.point and point.id == employee.point.id %}
+                            <option value="{{ point.id }}" selected>{{ point.name }}</option>
+                        {% else %}
+                            <option value="{{ point.id }}">{{ point.name }}</option>
+                        {% endif %}
+                      {% endfor %}
+                </select>
+                <span id="point-error" class="error invalid-feedback"></span>
+              </div>
+
+              <div class="form-group">
+                <select id="job-title" onclick="deleteError()" class="form-control clear" placeholder="Должность">
+                    {% for position in positions %}
+                        {% if employee.position and position.id == employee.position %}
+                            <option value="{{ position.id }}" selected>{{ position.name }}</option>
+                        {% else %}
+                            <option value="{{ position.id }}">{{ position.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <span id="job-title-error" class="error invalid-feedback"></span>
+              </div>
+
+              <div class="form-group">
+                <select id="salary-type" onclick="deleteError()" class="form-control clear" placeholder="Тип начисления з/п">
+                    {% for type_pay in type_pays %}
+                        {% if employee.type_pay and type_pay.id == employee.type_pay %}
+                            <option value="{{ type_pay.id }}" selected>{{ type_pay.name }}</option>
+                        {% else %}
+                            <option value="{{ type_pay.id }}">{{ type_pay.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    </select>
+                <span id="salary-type-error" class="error invalid-feedback"></span>
+                <span id="terms-error" class="error invalid-feedback" style="display: inline;"></span>
+              </div>
+            </div>
+          </form>
+
+          <div class="card-footer pt-0">
+            <button onclick="updateUser('{{ employee.user_id }}')" class="btn btn-secondary">Изменить</button>
+            <button onclick="deleteUser('{{ employee.user_id }}')" class="btn btn-danger">Удалить</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="card card-warning card-outline" style="display: none;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-edit"></i>
+            Уведомления
+          </h3>
+        </div>
+        <div class="card-body">
+          <button id="success-mg-delete" type="button" class="btn btn-success toastrDefaultSuccessDelete">
+            Данные о сотруднике успешно удалены
+          </button>
+           <button id="success-mg-update" type="button" class="btn btn-success toastrDefaultSuccessUpdate">
+            Данные успешно изменены
+          </button>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+      </div>
+    </div>
+</section>
+
+<script>
+
+const USER = {
+    'user_id': "{{ user_id }}",
+    'token': "{{ token }}",
+}
+
+// ###################
+// Запросы по API   ##
+// ###################
+
+const deleteUserAPI = async function(data, token) {
+    let url = `/user/?user_id=${data["user_id"]}`;
+    console.log(url);
+    let response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json;',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    const res = await response.json()
+    return res;
+}
+
+const updateUserAPI = async function(data, token) {
+    let url = `/user/?user_id=${data["user_id"]}`;
+    let body = {
+      "name": data["name"].value,
+      "surname": data["surname"].value,
+      "patronymic": data["patronymic"].value,
+      "tg_username": data["tg_username"].value,
+      "email": data["email"].value,
+      "phone": data["phone"].value,
+      "password": "123",
+      "passwordConfirmation": "123",
+      "position": data["position"].value,
+      "point": data["point"].value,
+      "type_pay": data["type_pay"].value,
+    };
+
+    let response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json;',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+    let result = await response.json();
+    return result;
+}
+
+// ###################
+// Обработка формы  ##
+// ###################
+
+async function deleteUser(user_id) {
+    let data = {
+    "user_id": user_id,
+    }
+    let res = await deleteUserAPI(data, USER.token);
+    if (!res.is_active) {
+      console.log("Пользователь удален")
+      document.getElementById("success-mg-delete").click()
+      deleteValue();
+    } else {
+      document.getElementById('terms-error').innerHTML = `${res.detail.name}`
+    }
+}
+
+
+async function updateUser(user_id) {
+    let data = {
+        "user_id": user_id,
+        "name": document.getElementById('name'),
+        "surname": document.getElementById('surname'),
+        "patronymic": document.getElementById('patronymic'),
+        "tg_username": document.getElementById('tg_username'),
+        "email": document.getElementById('email'),
+        "phone": document.getElementById('phone'),
+        "position": document.getElementById('job-title'),
+        "point": document.getElementById('point'),
+        "type_pay": document.getElementById('salary-type')
+      }
+
+    let isOK = validationForm(data);
+
+    if (isOK) {
+        let res = await updateUserAPI(data, USER.token);
+        console.log("Результат обновления пользователя")
+        console.log(res)
+        if (res) {
+          console.log("Пользователь изменен")
+          document.getElementById("success-mg-update").click()
+        } else {
+          document.getElementById('terms-error').innerHTML = `${res.detail.name}`
+        }
+    }
+}
+
+// ###################
+// Обработка ошибок  #
+// ###################
+
+function deleteValue() {
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+      control.value = "";
+      document.getElementById('terms-error').innerHTML = ""
+    });
+}
+
+function validationForm(data) {
+  var isOK = true
+  var str = new RegExp("[^а-яА-Яa-zA-ZёЁ+/)/(/-/'/ /./,-]+_");
+  var strEmail = new RegExp("[^a-zA-Z0-9/-/./@/_-]+");
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    // проверка каждого поля. все поля должны быть заполнены
+    if ((!control.value || control.value == "none") & !control.classList.contains('none-true')) {
+      isOK = false
+      control.classList.add('is-invalid');
+      document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
+    }
+  });
+
+  // // проверка почты
+  if (strEmail.test(data.email.value) || !data.email.value.includes('@') || !data.email.value.includes('.')) {
+    isOK = false
+    data.email.classList.add('is-invalid');
+    document.getElementById(`${data.email.id}-error`).innerHTML = "Такой почты не существует"
+  }
+
+  if (strEmail.test(data.email.value) || !data.email.value.includes('@') || !data.email.value.includes('.')) {
+    isOK = false
+    data.email.classList.add('is-invalid');
+    document.getElementById(`${data.email.id}-error`).innerHTML = "Такой почты не существует"
+  }
+  return isOK
+}
+
+</script>
+{% endblock %}
+
+
+  {% block scripts_footer %}
+  <script>
+    $(function() {
+      var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      });
+
+      $('.swalDefaultSuccess').click(function() {
+        Toast.fire({
+          icon: 'success',
+          title: 'Сотрудник успешно удален'
+        })
+      });
+
+      $('.toastrDefaultSuccessUpdate').click(function() {
+        toastr.success('Данные успешно изменены')
+      });
+
+      $('.toastrDefaultSuccessDelete').click(function() {
+        toastr.success('Сотрудник успешно удален')
+      });
+
+    });
+  </script>
+  {% endblock %}

@@ -1,12 +1,14 @@
 import datetime
 
-from fastapi import APIRouter, Request, Depends, Query
+from fastapi import APIRouter, Request, Depends, Query, HTTPException
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, HTMLResponse
+from starlette.templating import _TemplateResponse
 
 from api.actions.auth import get_current_user_from_token
+from api.actions.user import _get_user_by_id
 from db.models import User, Position, Point, TypePay, Visit
 from db.session import get_db
 import pandas as pd
@@ -101,11 +103,11 @@ async def admin(request: Request,  db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/employees-list")
-async def employees_list(request: Request,  db: AsyncSession = Depends(get_db)):
+async def employees_list(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 
-    employees = await db.execute(select(User))
+    employees = await db.execute(select(User).where(User.is_active == True))
     employees = employees.scalars().all()
 
     for employee in employees:
@@ -147,6 +149,7 @@ async def employees_list(request: Request,  db: AsyncSession = Depends(get_db)):
         )
     return RedirectResponse(url='/login')
 
+
 @router.get("/employees-add")
 async def employees_add(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
@@ -176,6 +179,47 @@ async def employees_add(request: Request, db: AsyncSession = Depends(get_db)):
         )
     return RedirectResponse(url='/login')
 
+
+@router.get("/employee")
+async def get_employee(request: Request, db: AsyncSession = Depends(get_db)) -> \
+        _TemplateResponse | RedirectResponse:
+    employee_id = request.query_params.get('employee_id', None)
+    employee = await _get_user_by_id(employee_id, db)
+    token: str = request.query_params.get('token', None)
+    user_id = request.query_params.get('user_id', None)
+
+    if employee is None:
+        raise HTTPException(
+            status_code=404, detail=f"User with id {employee_id} not found."
+        )
+
+    if token and user_id:
+
+        positions = await db.execute(select(Position))
+        positions = positions.scalars().all()
+
+        points = await db.execute(select(Point))
+        points = points.scalars().all()
+
+        type_pays = await db.execute(select(TypePay))
+        type_pays = type_pays.scalars().all()
+
+        return templates.TemplateResponse(
+            "user.html",
+            {
+                "user_id": user_id,
+                "token": token,
+                "request": request,
+                "employee": employee,
+                "positions": positions,
+                "points": points,
+                "type_pays": type_pays,
+            }
+        )
+
+    return RedirectResponse(url='/login')
+
+
 @router.get("/points-list")
 async def points_list(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
@@ -191,8 +235,6 @@ async def points_list(request: Request, db: AsyncSession = Depends(get_db)):
         except:
             users_count = 0
         p.users_count = users_count
-
-
 
     if token and user_id:
         return templates.TemplateResponse(
