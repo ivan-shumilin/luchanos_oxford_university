@@ -75,3 +75,43 @@ CREATE SCHEMA public;
 
 pg_restore --clean --dbname=postgresql://admin:asDSqwBF23*@79.174.88.60:19832/time_tracking -v ./2023-10-31__23-59__backup.sql
 55.805155:37.520674
+
+---
+
+## ENVs
+
+Всего должно быть определено 3 среды в папке ./env_vars:
+
+1. **.env** 
+
+Содержит:
+
++ APP_PORT
++ BOT_API_KEY
++ SENTRY_URL
+
++ REAL_DATABASE_URL
++ TEST_DATABASE_URL
+
++ SECRET_KEY
++ ALGORITHM
+
++ ACCESS_TOKEN_EXPIRE_MINUTES
+
++ TG_API
++ WHOOK
+
+2. **postgres.env** - используется в docker-compose-*.yaml
+
+Содержит: 
++ POSTGRES_USER
++ POSTGRES_PASSWORD
++ POSTGRES_DB
+
+3. **postgres-local.env** - используется в docker-compose-local.yaml
+
+Содержит:
+
++ POSTGRES_USER
++ POSTGRES_PASSWORD
++ POSTGRES_DB

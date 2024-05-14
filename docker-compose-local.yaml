@@ -4,10 +4,8 @@ services:
     container_name: "db"
     image: postgres:14.1-alpine
     restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+    env_file:
+      - env_vars/postgres.env
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -18,10 +16,8 @@ services:
     container_name: "db_test"
     image: postgres:14.1-alpine
     restart: always
-    environment:
-      - POSTGRES_USER=postgres_test
-      - POSTGRES_PASSWORD=postgres_test
-      - POSTGRES_DB=postgres_test
+    env_file:
+      - ./env_vars/postgres-local.env
     ports:
       - "5433:5432"
     networks:

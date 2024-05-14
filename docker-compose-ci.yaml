@@ -6,10 +6,8 @@ services:
     restart: always
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+    env_file:
+      - env_vars/postgres.env
     ports:
       - "5432:5432"
     networks:

@@ -24,19 +24,23 @@
                     <th>Телефон</th>
                     <th>Должность</th>
                     <th>Место работы</th>
-                    <th>Типов начисления з/п</th>
+                    <th>Тип начисления з/п</th>
                   </tr>
 
                   </thead>
                   <tbody>
                     {% for employee in employees %}
                       <tr>
-                        <td>{{ employee.name }} {{ employee.surname }} {{ employee.patronymic }}</th>
-                        <td>{{ employee.email }}</th>
-                        <td>{{ employee.phone }}</th>
-                        <td>{{ employee.position_name }}</th>
-                        <td>{{ employee.point_name }}</th>
-                        <td>{{ employee.type_pay_name }}</th>
+                        <td>
+                            <a href="/employee?user_id={{ user_id }}&token={{ token }}&employee_id={{ employee.user_id}}">
+                            {{ employee.name }} {{ employee.surname }} {{ employee.patronymic }}
+                            </a>
+                        </td>
+                        <td>{{ employee.email }}</td>
+                        <td>{{ employee.phone }}</td>
+                        <td>{{ employee.position_name }}</td>
+                        <td>{{ employee.point_name }}</td>
+                        <td>{{ employee.type_pay_name }}</td>
                       </tr>
                     {% endfor %}
                 </table>
