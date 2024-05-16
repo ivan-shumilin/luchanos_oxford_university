@@ -1,4 +1,5 @@
 import datetime
+from typing import Union
 
 from fastapi import APIRouter, Request, Depends, Query, HTTPException
 from fastapi.templating import Jinja2Templates
@@ -182,7 +183,7 @@ async def employees_add(request: Request, db: AsyncSession = Depends(get_db)):
 
 @router.get("/employee")
 async def get_employee(request: Request, db: AsyncSession = Depends(get_db)) -> \
-        _TemplateResponse | RedirectResponse:
+        Union[_TemplateResponse, RedirectResponse]:
     employee_id = request.query_params.get('employee_id', None)
     employee = await _get_user_by_id(employee_id, db)
     token: str = request.query_params.get('token', None)

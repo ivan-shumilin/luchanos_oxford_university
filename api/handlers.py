@@ -1,4 +1,5 @@
 from logging import getLogger
+from typing import Union
 from uuid import UUID
 
 from fastapi import APIRouter
@@ -65,7 +66,7 @@ async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> S
 async def update_user(user_id: UUID,
                       body: UserCreate,
                       db: AsyncSession = Depends(get_db),
-                      ) -> UUID | None:
+                      ) -> Union[UUID, None]:
 
     user = await _get_user_by_id(user_id, db)
 

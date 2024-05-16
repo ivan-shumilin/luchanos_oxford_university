@@ -67,11 +67,11 @@ class UserCreate(BaseModel):
     def validate_surname(cls, value):
         if value == "":
             raise HTTPException(
-                status_code=422, detail={"surname": "Укажите фамилию"}
+                status_code=422, detail={"name": "Укажите фамилию"}
             )
         if not LETTER_MATCH_PATTERN.match(value):
             raise HTTPException(
-                status_code=422, detail={"surname": "Фамилия должна состоять из букв"}
+                status_code=422, detail={"name": "Фамилия должна состоять из букв"}
             )
         return value
 
