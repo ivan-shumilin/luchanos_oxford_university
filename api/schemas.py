@@ -152,6 +152,9 @@ class ShowPoint(TunedModel):
     is_active: bool
 
 
+class DeletePointResponse(BaseModel):
+    deleted_point_id: int
+
 
 class TypePayCreate(TunedModel):
     name: str

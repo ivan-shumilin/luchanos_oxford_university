@@ -1,0 +1,214 @@
+{% extends "nav.html" %}
+{% block title %}Заведение {{ point.name }}{% endblock %}
+{% block title_page %}Заведениe {{ point.name }}{% endblock %}
+{% block user_name %}User name{% endblock %}
+{% block main %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Изменить заведение</h3>
+          </div>
+          <form>
+            <div class="card-body">
+              <div class="form-group">
+                <input id="name" onclick="deleteError()" type="text" class="form-control str" placeholder="Название"
+                value="{{ point.name }}">
+                <span id="name-error" class="error invalid-feedback"></span>
+              </div>
+              <div class="form-group">
+                <input id="address" onclick="deleteError()" type="text" class="form-control str" placeholder="Адрес"
+                value="{{ point.address }}">
+                <span id="address-error" class="error invalid-feedback"></span>
+              </div>
+              <div class="form-group">
+                <input id="coordinates" onclick="deleteError()" type="text" class="form-control str none-true" placeholder='Координаты в формате "XX.XXXXXX:XX.XXXXXX"'
+                value="{{ point.coordinates }}">
+                <span id="coordinates-error" class="error invalid-feedback"></span>
+              </div>
+            </div>
+          </form>
+            <div class="card-footer">
+              <button onclick="updatePoint('{{ point.id }}')" class="btn btn-secondary">Изменить</button>
+              <button onclick="deletePoint('{{ point.id }}')" class="btn btn-danger">Удалить</button>
+
+              <span id="terms-error" class="error invalid-feedback" style="display: inline;"></span>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-warning card-outline" style="display: none;">
+    <div class="card-header">
+      <h3 class="card-title">
+        <i class="fas fa-edit"></i>
+        Уведомления
+      </h3>
+    </div>
+    <div class="card-body">
+      <button id="success-mg" type="button" class="btn btn-success toastrDefaultSuccessDelete">
+          Заведение успешно удалено
+      </button>
+      <button id="success-mg-update" type="button" class="btn btn-success toastrDefaultSuccessUpdate">
+        Данные успешно изменены
+      </button>
+    <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+  </div>
+  </div>
+</section>
+
+<script>
+  // ###################
+  // Запросы по API   ##
+  // ###################
+  const deletePointAPI = async function(data, token) {
+      let url =  `/user/point?point_id=${data["point_id"]}`
+      console.log("Посылаем запрос на бэк запрос для удаления точки");
+      console.log(url)
+
+      let response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json;',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      let result = await response;
+      return result;
+  }
+
+  const updatePointAPI = async function(data, token) {
+    let url = `/user/point?point_id=${data["point_id"]}`;
+    let body = {
+      "name": data["name"].value,
+      "address": data["address"].value,
+      "coordinates": data["coordinates"].value
+    };
+
+    let response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json;',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+    let result = await response.json();
+    return result;
+}
+  
+  
+  // ###################
+  // Обработка формы  ##
+  // ###################
+  async function deletePoint(point_id) {
+    let data = {
+        "point_id": point_id
+    }
+    let res = await deletePointAPI(data, '{{ token }}');
+    if (!res.is_active) {
+        console.log("Точка удалена")
+        document.getElementById("success-mg").click()
+        deleteValue();
+    } else {
+        document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`
+    }
+  }
+
+
+  async function updatePoint(point_id) {
+    let data = {
+        "point_id": point_id,
+        "name": document.getElementById('name'),
+        "address": document.getElementById('address'),
+        "coordinates": document.getElementById('coordinates')
+      }
+    let isOK = validationForm(data);
+
+    if (isOK) {
+        let res = await updatePointAPI(data, '{{ token }}');
+        console.log("Результат обновления заведения")
+        console.log(res)
+        if (!(typeof res === 'object')) {
+          console.log("Пользователь изменен")
+          document.getElementById("success-mg-update").click()
+        } else {
+          document.getElementById('terms-error').innerHTML = `${res.detail.name}`
+        }
+    }
+}
+
+  // ###################
+  // Валидация формы  ##
+  // ###################
+  
+  function validationForm(data) {
+    var isOK = true
+    var str = new RegExp("[^а-яА-Яa-zA-ZёЁ+/)/(/-/'/ /./,-]+");
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+      // проверка каждого поля. все поля должны быть заполнены
+      if (!control.value & !control.classList.contains('none-true')) {
+        isOK = false
+        control.classList.add('is-invalid');
+        document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
+      }
+    });
+  
+    return isOK
+  }
+  
+  function deleteError() {
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+      if (control.classList.contains('is-invalid')) {
+        control.classList.remove('is-invalid');
+      }
+    });
+    document.getElementById('terms-error').innerHTML = ""
+  }
+
+function deleteValue() {
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+      control.value = "";
+      document.getElementById('terms-error').innerHTML = ""
+    });
+}
+  
+  
+  </script>
+  
+  {% endblock %}
+  
+  {% block scripts_footer %}
+  <script>
+        $(function() {
+      var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      });
+
+      $('.swalDefaultSuccess').click(function() {
+        Toast.fire({
+          icon: 'success',
+          title: 'Операция прошла успешно'
+        })
+      });
+
+      $('.toastrDefaultSuccessUpdate').click(function() {
+        toastr.success('Данные успешно изменены')
+      });
+
+      $('.toastrDefaultSuccessDelete').click(function() {
+        toastr.success('Заведение успешно удалено')
+      });
+
+    });
+  </script>
+  {% endblock %}

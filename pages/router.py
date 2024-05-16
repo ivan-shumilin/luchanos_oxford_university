@@ -9,6 +9,7 @@ from starlette.responses import RedirectResponse, HTMLResponse
 from starlette.templating import _TemplateResponse
 
 from api.actions.auth import get_current_user_from_token
+from api.actions.point import _get_point_by_id
 from api.actions.user import _get_user_by_id
 from db.models import User, Position, Point, TypePay, Visit
 from db.session import get_db
@@ -82,10 +83,10 @@ async def admin(request: Request,  db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 
-    employees = await db.execute(select(User))
+    employees = await db.execute(select(User).where(User.is_active == True))
     employees_count = len(employees.scalars().all())
 
-    points = await db.execute(select(Point))
+    points = await db.execute(select(Point).where(Point.is_active == True))
     points_count = len(points.scalars().all())
 
     if token and user_id:
@@ -159,7 +160,7 @@ async def employees_add(request: Request, db: AsyncSession = Depends(get_db)):
     positions = await db.execute(select(Position))
     positions = positions.scalars().all()
 
-    points = await db.execute(select(Point))
+    points = await db.execute(select(Point).where(Point.is_active == True))
     points = points.scalars().all()
 
     type_pays = await db.execute(select(TypePay))
@@ -206,7 +207,7 @@ async def get_employee(request: Request, db: AsyncSession = Depends(get_db)) -> 
         type_pays = type_pays.scalars().all()
 
         return templates.TemplateResponse(
-            "user.html",
+            "employee.html",
             {
                 "user_id": user_id,
                 "token": token,
@@ -226,7 +227,7 @@ async def points_list(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 
-    points = await db.execute(select(Point))
+    points = await db.execute(select(Point).where(Point.is_active == True))
     points = points.scalars().all()
 
     for p in points:
@@ -250,6 +251,7 @@ async def points_list(request: Request, db: AsyncSession = Depends(get_db)):
         )
     return RedirectResponse(url='/login')
 
+
 @router.get("/points-add")
 def points_add(request: Request):
     token: str = request.query_params.get('token', None)
@@ -265,6 +267,29 @@ def points_add(request: Request):
                 "page": "points",
             }
         )
+    return RedirectResponse(url='/login')
+
+
+@router.get("/point")
+async def get_point(request: Request, db: AsyncSession = Depends(get_db)):
+
+    point_id = int(request.query_params.get('point_id', None))
+    token: str = request.query_params.get('token', None)
+    user_id = request.query_params.get('user_id', None)
+
+    point = await _get_point_by_id(point_id, db)
+
+    if token and user_id:
+        return templates.TemplateResponse(
+            "point.html",
+            {
+                "user_id": user_id,
+                "token": token,
+                "request": request,
+                "point": point,
+            }
+        )
+
     return RedirectResponse(url='/login')
 
 

@@ -10,16 +10,16 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.actions.auth import get_current_user_from_token
-from api.actions.point import _create_new_point, _create_new_type_pay
+from api.actions.point import _create_new_point, _create_new_type_pay, _get_point_by_id, _delete_point, _update_point
 from api.actions.position import _create_new_position
-from api.actions.user import _create_new_user, _get_user_by_email, _get_user_by_phone, _get_user_by_tg, _restore_user
+from api.actions.user import _create_new_user, _get_user_by_email, _get_user_by_phone, _get_user_by_tg
 from api.actions.user import _delete_user
 from api.actions.user import _get_user_by_id
 from api.actions.user import _update_user
 from api.actions.user import check_user_permissions
 from api.actions.visit import _create_new_visit
 from api.schemas import DeleteUserResponse, PositionCreate, ShowPosition, PointCreate, ShowPoint, TypePayCreate, \
-    TypePayShow, VisitCreate, VisitShow
+    TypePayShow, VisitCreate, VisitShow, DeletePointResponse, ShowUser
 from api.schemas import ShowUser
 from api.schemas import UpdatedUserResponse
 from api.schemas import UpdateUserRequest
@@ -33,13 +33,45 @@ logger = getLogger(__name__)
 user_router = APIRouter()
 
 
-@user_router.post("/", response_model=ShowUser)
-async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> ShowUser:
+@user_router.post("/")
+async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> Union[UUID, None, ShowUser]:
     user = await _get_user_by_tg(body.tg_username, db)
 
     # случай когда создают пользователя, который ранее был создан и впоследствии удален
     if user:
-        return await _restore_user(user.user_id, db)
+        try:
+            data = {
+                "name": body.name,
+                "surname": body.surname,
+                "patronymic": body.patronymic,
+                "email": body.email,
+                "phone": body.phone,
+                "position": body.position,
+                "point": body.point,
+                "type_pay": body.type_pay,
+                "is_active": True
+            }
+            await _update_user(data, user.user_id, db)
+            return ShowUser(
+                user_id=user.user_id,
+                name=user.name,
+                surname=user.surname,
+                patronymic=user.patronymic,
+                tg_username=user.tg_username,
+                email=user.email,
+                phone=user.phone,
+                is_active=user.is_active,
+                position=user.position,
+                point=user.point,
+                type_pay=user.type_pay,
+            )
+
+        except IntegrityError as err:
+            logger.error(err)
+            raise HTTPException(
+                status_code=503,
+                detail={"name": f"Database error: {err}"}
+            )
 
     if user is not None:
         raise HTTPException(
@@ -67,7 +99,6 @@ async def update_user(user_id: UUID,
                       body: UserCreate,
                       db: AsyncSession = Depends(get_db),
                       ) -> Union[UUID, None]:
-
     user = await _get_user_by_id(user_id, db)
 
     if user is None:
@@ -236,7 +267,7 @@ async def update_user_by_id(
         )
     if user_id != current_user.user_id:
         if check_user_permissions(
-            target_user=user_for_update, current_user=current_user
+                target_user=user_for_update, current_user=current_user
         ):
             raise HTTPException(status_code=403, detail="Forbidden.")
     try:
@@ -272,6 +303,56 @@ async def create_point(body: PointCreate, db: AsyncSession = Depends(get_db)) ->
     except IntegrityError as err:
         logger.error(err)
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
+
+
+@user_router.delete("/point")
+async def delete_point(
+    point_id: int,
+    db: AsyncSession = Depends(get_db),
+) -> DeletePointResponse:
+    point_for_deletion = await _get_point_by_id(point_id, db)
+
+    if point_for_deletion is None:
+        raise HTTPException(
+            status_code=404, detail=f"Point with id {point_id} not found."
+        )
+
+    deleted_point_id = await _delete_point(point_id, db)
+    if deleted_point_id is None:
+        raise HTTPException(
+            status_code=404, detail=f"Cant delete point with id {point_id}."
+        )
+    return DeletePointResponse(deleted_point_id=deleted_point_id)
+
+
+@user_router.put("/point")
+async def update_point(point_id: int,
+                       body: PointCreate,
+                       db: AsyncSession = Depends(get_db),
+                       ) -> Union[UUID, None]:
+
+    point = await _get_point_by_id(point_id, db)
+
+    if point is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"name": f"Заведение {body.name} не найден."}
+        )
+
+    try:
+        data = {
+            "name": body.name,
+            "address": body.address,
+            "coordinates": body.coordinates
+        }
+        return await _update_point(data, point_id, db)
+
+    except IntegrityError as err:
+        logger.error(err)
+        raise HTTPException(
+            status_code=503,
+            detail={"name": f"Database error: {err}"}
+        )
 
 
 @user_router.post("/type_pay")
