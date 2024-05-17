@@ -40,7 +40,11 @@
               </tr>           -->
               {% for point in points %}
                 <tr>
-                  <td>{{ point.name }}</td>
+                  <td>
+                      <a href="/point?user_id={{ user_id }}&token={{ token }}&point_id={{ point.id}}">
+                        {{ point.name }}
+                      </a>
+                  </td>
                   <td>{{ point.address }}</td>
                   <td>{{ point.coordinates }}</td>
                   <td>{{ point.users_count }}</td>

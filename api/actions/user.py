@@ -59,16 +59,7 @@ async def _update_user(
     async with session.begin():
         user_dal = UserDAL(session)
         updated_user_id = await user_dal.update_user(
-            user_id=user_id, **updated_user_params
-        )
-        return updated_user_id
-
-
-async def _restore_user(user_id: UUID, session):
-    async with session.begin():
-        user_dal = UserDAL(session)
-        updated_user_id = await user_dal.restore_user(
-            user_id=user_id
+            user_id=user_id, **updated_user_params,
         )
         return updated_user_id
 

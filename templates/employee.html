@@ -1,6 +1,11 @@
 {% extends "nav.html" %}
 {% block title %} Сотрудник {{ employee.name }} {{ employee.surname }} {{ employee.patronymic }} {% endblock %}
-{% block title_page %}Сотрудник {{ employee.name }} {{ employee.surname }} {{ employee.patronymic }} {% endblock %}
+{% block title_page %}
+    Сотрудник {{ employee.name }} {{ employee.surname }} {{ employee.patronymic }}
+    {% if 'ROLE_PORTAL_SUPERADMIN' in employee.roles%}
+        (администратор)
+    {% endif %}
+{% endblock %}
 {% block user_name %}User name{% endblock %}
 {% block main %}
 <section class="content">
@@ -96,7 +101,9 @@
 
           <div class="card-footer pt-0">
             <button onclick="updateUser('{{ employee.user_id }}')" class="btn btn-secondary">Изменить</button>
+              {% if 'ROLE_PORTAL_SUPERADMIN' not in employee.roles%}
             <button onclick="deleteUser('{{ employee.user_id }}')" class="btn btn-danger">Удалить</button>
+              {% endif %}
           </div>
 
         </div>
@@ -158,7 +165,6 @@ const updateUserAPI = async function(data, token) {
       "email": data["email"].value,
       "phone": data["phone"].value,
       "password": "123",
-      "passwordConfirmation": "123",
       "position": data["position"].value,
       "point": data["point"].value,
       "type_pay": data["type_pay"].value,
@@ -208,14 +214,13 @@ async function updateUser(user_id) {
         "point": document.getElementById('point'),
         "type_pay": document.getElementById('salary-type')
       }
-
     let isOK = validationForm(data);
 
     if (isOK) {
         let res = await updateUserAPI(data, USER.token);
         console.log("Результат обновления пользователя")
         console.log(res)
-        if (res) {
+        if (!(typeof res === 'object')) {
           console.log("Пользователь изменен")
           document.getElementById("success-mg-update").click()
         } else {
@@ -227,14 +232,6 @@ async function updateUser(user_id) {
 // ###################
 // Обработка ошибок  #
 // ###################
-
-function deleteValue() {
-    const formControls = document.querySelectorAll('.form-control');
-    formControls.forEach(control => {
-      control.value = "";
-      document.getElementById('terms-error').innerHTML = ""
-    });
-}
 
 function validationForm(data) {
   var isOK = true
@@ -252,17 +249,30 @@ function validationForm(data) {
 
   // // проверка почты
   if (strEmail.test(data.email.value) || !data.email.value.includes('@') || !data.email.value.includes('.')) {
-    isOK = false
-    data.email.classList.add('is-invalid');
-    document.getElementById(`${data.email.id}-error`).innerHTML = "Такой почты не существует"
-  }
-
-  if (strEmail.test(data.email.value) || !data.email.value.includes('@') || !data.email.value.includes('.')) {
-    isOK = false
-    data.email.classList.add('is-invalid');
-    document.getElementById(`${data.email.id}-error`).innerHTML = "Такой почты не существует"
+      isOK = false
+      data.email.classList.add('is-invalid');
+      document.getElementById(`${data.email.id}-error`).innerHTML = "Такой почты не существует"
   }
   return isOK
+}
+
+function deleteValue() {
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+      control.value = "";
+      document.getElementById('terms-error').innerHTML = ""
+    });
+}
+
+function deleteError() {
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    if (control.classList.contains('is-invalid')) {
+      control.classList.remove('is-invalid');
+    }
+  });
+  document.getElementById('terms-error').innerHTML = ""
+
 }
 
 </script>
