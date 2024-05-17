@@ -175,6 +175,13 @@ class PointDAL:
         if user_row is not None:
             return user_row[0]
 
+    async def get_point_by_address(self, point_address: str) -> Union[Point, None]:
+        query = select(Point).where(Point.address == point_address)
+        res = await self.db_session.execute(query)
+        user_row = res.fetchone()
+        if user_row is not None:
+            return user_row[0]
+
     async def delete_point(self, point_id: int) -> Union[int, None]:
         query = (
             update(Point)
@@ -190,7 +197,7 @@ class PointDAL:
     async def update_point(self, point_id: int, **kwargs) -> Union[int, None]:
         query = (
             update(Point)
-            .where(and_(Point.id == point_id, Point.is_active == True))
+            .where(Point.id == point_id)
             .values(kwargs)
             .returning(Point.id)
         )

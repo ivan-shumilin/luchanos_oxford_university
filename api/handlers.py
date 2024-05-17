@@ -10,7 +10,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.actions.auth import get_current_user_from_token
-from api.actions.point import _create_new_point, _create_new_type_pay, _get_point_by_id, _delete_point, _update_point
+from api.actions.point import _create_new_point, _create_new_type_pay, _get_point_by_id, _delete_point, _update_point, \
+    _get_point_by_address
 from api.actions.position import _create_new_position
 from api.actions.user import _create_new_user, _get_user_by_email, _get_user_by_phone, _get_user_by_tg
 from api.actions.user import _delete_user
@@ -298,6 +299,24 @@ async def get_positions(db: AsyncSession = Depends(get_db)):
 
 @user_router.post("/point")
 async def create_point(body: PointCreate, db: AsyncSession = Depends(get_db)) -> ShowPoint:
+    point = await _get_point_by_address(body.address, db)
+    if point:
+        try:
+            data = {
+                "name": body.name,
+                "is_active": True
+            }
+            await _update_point(data, point.id, db)
+            return ShowPoint(
+                id=point.id,
+                name=body.name,
+                address=point.address,
+                coordinates=point.coordinates,
+                is_active=True,
+            )
+        except IntegrityError as err:
+            logger.error(err)
+            raise HTTPException(status_code=503, detail=f"Database error: {err}")
     try:
         return await _create_new_point(body, db)
     except IntegrityError as err:

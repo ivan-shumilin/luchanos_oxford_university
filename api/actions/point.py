@@ -34,6 +34,16 @@ async def _get_point_by_id(point_id, session) -> Union[Point, None]:
             return point
 
 
+async def _get_point_by_address(point_address, session) -> Union[Point, None]:
+    async with session.begin():
+        point_dal = PointDAL(session)
+        point = await point_dal.get_point_by_address(
+            point_address=point_address,
+        )
+        if point is not None:
+            return point
+
+
 async def get_users_by_point(point_id: int, db):
     query = select(User).where(User.point == point_id)
     result = await db.execute(query)
@@ -54,7 +64,7 @@ async def _delete_point(point_id, session) -> Union[int, None]:
 
 
 async def _update_point(
-    updated_point_params: dict, point_id: int, session
+        updated_point_params: dict, point_id: int, session
 ) -> Union[int, None]:
     async with session.begin():
         point_dal = PointDAL(session)
