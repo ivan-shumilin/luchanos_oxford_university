@@ -1,0 +1,211 @@
+{% extends "nav.html" %}
+{% block title %} Должность {{ position.name }} {% endblock %}
+{% block title_page %}Должность {{ position.name }} {% endblock %}
+{% block user_name %}User name{% endblock %}
+{% block main %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Информация о должности</h3>
+          </div>
+          <form>
+            <div class="card-body">
+              <div class="form-group">
+                <input id="name" onclick="deleteError()" type="text" class="form-control str" placeholder="Название"
+                value="{{ position.name }}">
+                <span id="name-error" class="error invalid-feedback"></span>
+              </div>
+
+            </div>
+          </form>
+          <div class="card-footer">
+            <button onclick="updatePosition('{{ position.id }}')" class="btn btn-secondary">Изменить</button>
+            <button onclick="deletePosition('{{ position.id }}')" class="btn btn-danger">Удалить</button>
+            <span id="terms-error" class="error invalid-feedback" style="display: inline;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-warning card-outline" style="display: none;">
+    <div class="card-header">
+      <h3 class="card-title">
+        <i class="fas fa-edit"></i>
+        Уведомления
+      </h3>
+    </div>
+    <div class="card-body">
+      <button id="success-mg" type="button" class="btn btn-success toastrDefaultSuccessDelete">
+          Должзность успешно удалена
+      </button>
+      <button id="success-mg-update" type="button" class="btn btn-success toastrDefaultSuccessUpdate">
+        Данные успешно изменены
+      </button>
+    <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+  </div>
+  </div>
+</section>
+
+<script>
+
+// ###################
+// Запросы по API   ##
+// ###################
+const deletePositionAPI = async function(data, token) {
+  let url =  `/user/position?position_id=${data["position_id"]}`
+  console.log("Посылаем запрос на бэк запрос для удаления должности");
+  console.log(url)
+
+  let response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json;',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  let result = await response;
+  return result;
+}
+
+const updatePositionAPI = async function(data, token) {
+    let url = `/user/position?position_id=${data["position_id"]}`;
+    let body = {
+      "name": data["name"].value,
+    };
+
+    let response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json;',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+    let result = await response.json();
+    return result;
+}
+
+
+// ###################
+// Обработка формы  ##
+// ###################
+  async function deletePosition(position_id) {
+    let data = {
+        "position_id": position_id
+    }
+    let res = await deletePositionAPI(data, '{{ token }}');
+    if (!res.is_active) {
+        console.log("Должность удалена")
+        document.getElementById("success-mg").click()
+        deleteValue();
+    } else {
+        document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`
+    }
+  }
+
+
+  async function updatePosition(position_id) {
+    let data = {
+        "position_id": position_id,
+        "name": document.getElementById('name'),
+      }
+    let isOK = validationForm(data);
+
+    if (isOK) {
+        let res = await updatePositionAPI(data, '{{ token }}');
+        console.log("Результат обновления заведения")
+        console.log(res)
+        if (!(typeof res === 'object')) {
+          console.log("Пользователь изменен")
+          document.getElementById("success-mg-update").click()
+        } else {
+          document.getElementById('terms-error').innerHTML = `${res.detail.name}`
+        }
+    }
+}
+
+
+// ###################
+// Валидация формы  ##
+// ###################
+
+function validationForm(data) {
+  var isOK = true
+  var str = new RegExp("[^а-яА-Яa-zA-ZёЁ+/)/(/-/'/ /./,-]+");
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    // проверка каждого поля. все поля должны быть заполнены
+    if (!control.value & !control.classList.contains('none-true')) {
+      isOK = false
+      control.classList.add('is-invalid');
+      document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
+    }
+
+    // проверка полей, которые должны состоять опр-х символов
+    if (control.classList.contains('str')) {
+      if (str.test(control.value)) {
+        isOK = false
+        control.classList.add('is-invalid');
+        document.getElementById(`${control.id}-error`).innerHTML = "Поле может содержать только буквы и символы ()-,."
+      }
+    }
+  });
+
+  return isOK
+}
+
+function deleteError() {
+  const formControls = document.querySelectorAll('.form-control');
+  formControls.forEach(control => {
+    if (control.classList.contains('is-invalid')) {
+      control.classList.remove('is-invalid');
+    }
+  });
+  document.getElementById('terms-error').innerHTML = ""
+}
+
+function deleteValue() {
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+      control.value = "";
+      document.getElementById('terms-error').innerHTML = ""
+    });
+}
+
+
+</script>
+
+{% endblock %}
+
+{% block scripts_footer %}
+<script>
+    $(function() {
+  var Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000
+  });
+
+  $('.swalDefaultSuccess').click(function() {
+    Toast.fire({
+      icon: 'success',
+      title: 'Операция прошла успешно'
+    })
+  });
+
+  $('.toastrDefaultSuccessUpdate').click(function() {
+    toastr.success('Данные успешно изменены')
+  });
+
+  $('.toastrDefaultSuccessDelete').click(function() {
+    toastr.success('Заведение успешно удалено')
+  });
+
+});
+</script>
+{% endblock %}

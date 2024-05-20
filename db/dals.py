@@ -134,10 +134,10 @@ class PositionDAL:
         await self.db_session.flush()
         return new_position
 
-    async def delete_position(self, id: UUID) -> Union[UUID, None]:
+    async def delete_position(self, position_id: int) -> Union[int, None]:
         query = (
             update(Position)
-            .where(and_(Position.id == id, Position.is_active == True))
+            .where(and_(Position.id == position_id, Position.is_active == True))
             .values(is_active=False)
             .returning(Position.id)
         )
@@ -145,6 +145,30 @@ class PositionDAL:
         deleted_position_id_row = res.fetchone()
         if deleted_position_id_row is not None:
             return deleted_position_id_row[0]
+
+    async def get_position_by_id(self, position_id: int) -> Union[Position, None]:
+        query = select(Position).where(Position.id == position_id)
+        result = await self.db_session.scalar(query)
+        return result
+
+    async def get_position_by_name(self, position_name: str) -> Union[Point, None]:
+        query = select(Position).where(Position.name == position_name)
+        res = await self.db_session.execute(query)
+        user_row = res.fetchone()
+        if user_row is not None:
+            return user_row[0]
+
+    async def update_position(self, position_id: int, **kwargs) -> Union[int, None]:
+        query = (
+            update(Position)
+            .where(Position.id == position_id)
+            .values(kwargs)
+            .returning(Position.id)
+        )
+        res = await self.db_session.execute(query)
+        update_position_id_row = res.fetchone()
+        if update_position_id_row is not None:
+            return update_position_id_row[0]
 
 
 class PointDAL:

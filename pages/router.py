@@ -3,13 +3,14 @@ from typing import Union
 
 from fastapi import APIRouter, Request, Depends, Query, HTTPException
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import RedirectResponse, HTMLResponse
 from starlette.templating import _TemplateResponse
 
 from api.actions.auth import get_current_user_from_token
 from api.actions.point import _get_point_by_id
+from api.actions.position import _get_position_by_id
 from api.actions.user import _get_user_by_id
 from db.models import User, Position, Point, TypePay, Visit
 from db.session import get_db
@@ -21,25 +22,53 @@ router = APIRouter(
 )
 
 templates = Jinja2Templates(directory="templates")
+
+
 @router.get("/base")
 def get_base_page(request: Request):
     return templates.TemplateResponse("auth/base.html", {"request": request})
+
 
 @router.get("/register")
 def register(request: Request):
     return templates.TemplateResponse("auth/register.html", {"request": request})
 
+
 @router.get("/login")
 def login(request: Request):
     return templates.TemplateResponse("auth/login.html", {"request": request})
+
 
 @router.get("/recover-password")
 def recover_password(request: Request):
     return templates.TemplateResponse("auth/recover-password.html", {"request": request})
 
+
 @router.get("/forgot-password")
 def forgot_password(request: Request):
     return templates.TemplateResponse("auth/forgot-password.html", {"request": request})
+
+
+@router.get("/job-title")
+async def get_position(request: Request, db: AsyncSession = Depends(get_db)):
+    position_id = int(request.query_params.get('position_id', None))
+    position = await _get_position_by_id(position_id, db)
+    token: str = request.query_params.get('token', None)
+    user_id = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        return templates.TemplateResponse(
+            "job-title.html",
+            {
+                "user_id": user_id,
+                "token": token,
+                "request": request,
+                "position": position,
+            }
+        )
+
+    return RedirectResponse(url='/login')
+
 
 @router.get("/job-title-add")
 def job_title_add(request: Request, token: str, user_id: str):
@@ -53,15 +82,15 @@ def job_title_add(request: Request, token: str, user_id: str):
         }
     )
 
+
 @router.get("/job-title-list")
 async def job_title_list(request: Request, token: str, user_id: str, db: AsyncSession = Depends(get_db)):
-
-    positions = await db.execute(select(Position))
+    positions = await db.execute(select(Position).where(Position.is_active == True))
     positions = positions.scalars().all()
 
     for position in positions:
         try:
-            users = await db.execute(select(User).where(User.position == position.id))
+            users = await db.execute(select(User).where(and_(User.position == position.id, User.is_active == True)))
             users_count = len(users.scalars().all())
         except:
             users_count = 0
@@ -78,8 +107,9 @@ async def job_title_list(request: Request, token: str, user_id: str, db: AsyncSe
         }
     )
 
+
 @router.get("/admin")
-async def admin(request: Request,  db: AsyncSession = Depends(get_db)):
+async def admin(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 
@@ -137,7 +167,6 @@ async def employees_list(request: Request, db: AsyncSession = Depends(get_db)):
             type_pay_name = employee.type_pay
         employee.type_pay_name = type_pay_name
 
-
     if token and user_id:
         return templates.TemplateResponse(
             "employees-list.html",
@@ -157,7 +186,7 @@ async def employees_add(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 
-    positions = await db.execute(select(Position))
+    positions = await db.execute(select(Position).where(Position.is_active == True))
     positions = positions.scalars().all()
 
     points = await db.execute(select(Point).where(Point.is_active == True))
@@ -196,7 +225,6 @@ async def get_employee(request: Request, db: AsyncSession = Depends(get_db)) -> 
         )
 
     if token and user_id:
-
         positions = await db.execute(select(Position))
         positions = positions.scalars().all()
 
@@ -272,7 +300,6 @@ def points_add(request: Request):
 
 @router.get("/point")
 async def get_point(request: Request, db: AsyncSession = Depends(get_db)):
-
     point_id = int(request.query_params.get('point_id', None))
     token: str = request.query_params.get('token', None)
     user_id = request.query_params.get('user_id', None)
@@ -318,7 +345,6 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
 
     visits = await db.execute(select(Visit))
     visits = visits.scalars().all()
-
 
     for v in visits:
         try:
