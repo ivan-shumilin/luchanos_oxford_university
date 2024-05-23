@@ -12,10 +12,12 @@ async def _create_new_position(body: PositionCreate, session) -> ShowPosition:
         position_dal = PositionDAL(session)
         position = await position_dal.create_position(
             name=body.name,
+            category_id=body.category_id
         )
         return ShowPosition(
             id=position.id,
             name=position.name,
+            category_id=position.category_id,
             is_active=position.is_active,
         )
 

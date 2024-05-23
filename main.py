@@ -1,4 +1,6 @@
 import json
+import logging
+from time import sleep
 
 import sentry_sdk
 import uvicorn
@@ -98,6 +100,7 @@ LOCATIONS = [
     }
 ]
 
+
 def get_point(latitude: float, longitude: float) -> Point:
     return Point(latitude=latitude, longitude=longitude)
 
@@ -110,9 +113,10 @@ async def check_user(obj, db):
         for _ in range(10):
             query = select(User).where(User.tg_username == received_username)
             user = await db.scalar(query)
-        # user = await db.execute(select(User).where(User.tg_username == received_username))
-        # user = user.scalar()
-    except:
+        sleep(1)
+    except Exception as err:
+        print(err)
+        logging.error(f"Ошибка при выполнении запроса к базе данных: {e}")
         user = None
 
     if user is None:
@@ -125,7 +129,7 @@ async def check_user(obj, db):
 async def check_dist(obj, db):
     answer: str | None = None
     target_point = get_point(obj.message.location.latitude, obj.message.location.longitude)
-    points = await db.execute(select(Points))
+    points = await db.execute(select(Points).where(Points.is_active == True))
     points = points.scalars().all()
 
     for point in points:

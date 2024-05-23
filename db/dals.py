@@ -126,9 +126,11 @@ class PositionDAL:
     async def create_position(
         self,
         name: str,
+        category_id: int
     ) -> Position:
         new_position = Position(
             name=name,
+            category_id=category_id
         )
         self.db_session.add(new_position)
         await self.db_session.flush()

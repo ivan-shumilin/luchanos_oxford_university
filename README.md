@@ -115,3 +115,30 @@ pg_restore --clean --dbname=postgresql://admin:asDSqwBF23*@79.174.88.60:19832/ti
 + POSTGRES_USER
 + POSTGRES_PASSWORD
 + POSTGRES_DB
+
+--- 
+### Вставка в таблицу category
+
+```insert into public.category (name) values ('{named}')```
+
+Если возникнут проблемы с downgrade в функции вместо None
+
+``` SELECT constraint_name, constraint_type
+FROM information_schema.table_constraints
+WHERE table_name = 'position'; ```
+подставить fk
+
+UPDATE public.position SET category_id = 1 WHERE category_id IS NULL;
+```
+### общий скрипт обновления
+```
+-- UPDATE public.position SET category_id = 4 WHERE category_id IS NULL;
+-- SELECT constraint_name FROM information_schema.table_constraints WHERE table_name = 'position';
+-- insert into public.category (name) values ('——');
+-- insert into public.category (name) values ('Зал');
+-- insert into public.category (name) values ('Производство');
+-- insert into public.category (name) values ('Кофе-поинт');
+
+-- UPDATE public.position SET category_id = 2 WHERE category_id IS NULL;
+UPDATE public.category SET is_active = true WHERE category.is_active IS NULL;
+```

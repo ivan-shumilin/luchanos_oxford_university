@@ -290,12 +290,14 @@ async def create_position(body: PositionCreate, db: AsyncSession = Depends(get_d
         try:
             data = {
                 "name": body.name,
+                "category_id": body.category_id,
                 "is_active": True
             }
             await _update_position(data, position.id, db)
             return ShowPosition(
                 id=position.id,
                 name=body.name,
+                category_id=body.category_id,
                 is_active=True
             )
         except IntegrityError as err:
@@ -352,6 +354,7 @@ async def update_position(position_id: int,
     try:
         data = {
             "name": body.name,
+            "category_id": body.category_id
         }
         return await _update_position(data, position_id, db)
 
