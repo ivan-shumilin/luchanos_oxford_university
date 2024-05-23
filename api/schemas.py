@@ -131,11 +131,13 @@ class Token(BaseModel):
 class ShowPosition(TunedModel):
     id: int
     name: str
+    category_id: int
     is_active: bool
 
 
 class PositionCreate(BaseModel):
     name: str
+    category_id: int
 
 
 class PointCreate(BaseModel):

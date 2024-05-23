@@ -20,6 +20,7 @@
               <thead>
               <tr>
                 <th>Название</th>
+                <th>Категория</th>
                 <th>Кол-во сотрудников</th>
               </tr>
               </thead>
@@ -31,6 +32,7 @@
                     {{ position.name }}
                   </a>
                 </td>
+                   <td> {{ position.category.name }}</td>
                   <td>{{ position.users_count }}</td>
                 </tr>
               {% endfor %}

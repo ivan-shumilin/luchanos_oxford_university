@@ -5,6 +5,7 @@ from fastapi import APIRouter, Request, Depends, Query, HTTPException
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 from starlette.responses import RedirectResponse, HTMLResponse
 from starlette.templating import _TemplateResponse
 
@@ -12,7 +13,7 @@ from api.actions.auth import get_current_user_from_token
 from api.actions.point import _get_point_by_id
 from api.actions.position import _get_position_by_id
 from api.actions.user import _get_user_by_id
-from db.models import User, Position, Point, TypePay, Visit
+from db.models import User, Position, Point, TypePay, Visit, Category
 from db.session import get_db
 import pandas as pd
 
@@ -56,10 +57,16 @@ async def get_position(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id = request.query_params.get('user_id', None)
 
+    categories = await db.scalars(select(Category).where(Category.is_active == True))
+    categories = categories.all()
+
+    print(categories)
+
     if token and user_id:
         return templates.TemplateResponse(
             "job-title.html",
             {
+                "categories": categories,
                 "user_id": user_id,
                 "token": token,
                 "request": request,
@@ -71,10 +78,15 @@ async def get_position(request: Request, db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/job-title-add")
-def job_title_add(request: Request, token: str, user_id: str):
+async def job_title_add(request: Request, token: str, user_id: str,  db: AsyncSession = Depends(get_db)):
+
+    categories = await db.execute(select(Category).where(Category.is_active == True))
+    categories = categories.scalars().all()
+
     return templates.TemplateResponse(
         "job-title-add.html",
         {
+            "categories": categories,
             "request": request,
             "token": token,
             "user_id": user_id,
@@ -85,7 +97,7 @@ def job_title_add(request: Request, token: str, user_id: str):
 
 @router.get("/job-title-list")
 async def job_title_list(request: Request, token: str, user_id: str, db: AsyncSession = Depends(get_db)):
-    positions = await db.execute(select(Position).where(Position.is_active == True))
+    positions = await db.execute(select(Position).where(Position.is_active == True).options(joinedload(Position.category)))
     positions = positions.scalars().all()
 
     for position in positions:

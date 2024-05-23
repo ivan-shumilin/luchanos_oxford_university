@@ -5,8 +5,7 @@ from sqlalchemy import Column, ForeignKey, Enum
 from sqlalchemy import String, Integer, Boolean, DateTime
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base
-
+from sqlalchemy.orm import declarative_base, relationship
 
 ##############################
 # BLOCK WITH DATABASE MODELS #
@@ -73,7 +72,10 @@ class Position(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
+    category_id = Column(Integer, ForeignKey('category.id'), )
     is_active = Column(Boolean(), default=True)
+
+    category = relationship('Category', back_populates='positions')
 
 
 class Point(Base):
@@ -94,3 +96,13 @@ class Visit(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"))
     point = Column(Integer, ForeignKey("point.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class Category(Base):
+    __tablename__ = "category"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    is_active = Column(Boolean(), default=True)
+
+    positions = relationship('Position', back_populates='category')

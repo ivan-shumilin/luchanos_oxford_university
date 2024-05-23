@@ -18,6 +18,16 @@
                 <span id="name-error" class="error invalid-feedback"></span>
               </div>
 
+                <div class="form-group">
+                <select id="category" onclick="deleteError()" class="form-control clear" placeholder="Категория">
+                  <option selected disabled hidden value="none">Категория</option>
+                  {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                  {% endfor %}
+                </select>
+                <span id="point-error" class="error invalid-feedback"></span>
+              </div>
+
             </div>
           </form>
           <div class="card-footer">
@@ -54,6 +64,7 @@ const createPositionAPI = async function(data) {
     let url = '/user/position'
     let body = {
       "name": data["name"].value,
+      "category_id": data["category"].value
     };
 
     let response = await fetch(url, {
@@ -74,8 +85,9 @@ const createPositionAPI = async function(data) {
 async function createPosition() {
   let data = {
     "name": document.getElementById('name'),
+    "category": document.getElementById('category'),
   }
-
+    console.log(data["name"].value, data["category"].value)
   // проверка формы
   let isOK = validationForm(data);
 
@@ -126,6 +138,18 @@ function deleteError() {
   document.getElementById('terms-error').innerHTML = ""
 }
 
+function deleteValue() {
+  const selects = ["category"]
+  const formControls = document.querySelectorAll('.clear');
+  formControls.forEach(control => {
+    if (selects.includes(control.id)) {
+      control.value = "none";
+    } else {
+      control.value = "";
+    }
+    document.getElementById('terms-error').innerHTML = ""
+  });
+}
 
 </script>
 
