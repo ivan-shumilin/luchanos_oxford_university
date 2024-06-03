@@ -12,7 +12,10 @@
 
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Журнал посещений</h3>
+                <h3 class="card-title">Журнал посещений</h3> <br>
+                  <a class="btn btn-secondary" href="/report_info?user_id={{ user_id }}&token={{ token }}" role="button">
+                      Создать отчет за <span id="datetime"></span>
+                  </a>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -84,5 +87,13 @@
       "responsive": true,
     });
   });
+
+  window.onload = function() {
+      setInterval(function () {
+          const date = new Date();
+          const monthName = date.toLocaleString('default', { month: 'long' });
+          document.getElementById('datetime').innerHTML = monthName;
+      }, 1000); // 1000 milliseconds = 1 second
+  }
 </script>
 {% endblock %}
