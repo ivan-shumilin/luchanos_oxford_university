@@ -108,10 +108,15 @@ env_vars/postgres-local.env
 .venv
 .env
 env/
+env_vars/
 venv/
 ENV/
 env.bak/
 venv.bak/
+*.env
+
+## alembic
+alembic.ini
 
 # Spyder project settings
 .spyderproject

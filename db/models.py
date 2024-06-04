@@ -22,8 +22,6 @@ class PortalRole(str, Enum):
 
 # тип начисления з/п
 
-
-
 class User(Base):
     __tablename__ = "users"
 
@@ -40,6 +38,9 @@ class User(Base):
     position = Column(Integer, ForeignKey("position.id"))
     point = Column(Integer, ForeignKey("point.id"))
     type_pay = Column(Integer, ForeignKey("type_pay.id"))
+
+    visits = relationship("Visit", back_populates="user")
+    position_id = relationship("Position", back_populates="users")
 
 
     @property
@@ -76,6 +77,7 @@ class Position(Base):
     is_active = Column(Boolean(), default=True)
 
     category = relationship('Category', back_populates='positions')
+    users = relationship('User', back_populates='position_id')
 
 
 class Point(Base):
@@ -87,6 +89,8 @@ class Point(Base):
     coordinates = Column(String, nullable=False)
     is_active = Column(Boolean(), default=True)
 
+    visits = relationship("Visit", back_populates="point_id")
+
 
 class Visit(Base):
     __tablename__ = "visit"
@@ -96,6 +100,10 @@ class Visit(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"))
     point = Column(Integer, ForeignKey("point.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="visits")
+    # на самом деле тут лучше было бы point а сверху point_id: не путаться что отношение, а что фк
+    point_id = relationship("Point", back_populates="visits")
 
 
 class Category(Base):

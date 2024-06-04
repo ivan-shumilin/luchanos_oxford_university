@@ -1,4 +1,5 @@
 import datetime
+from time import sleep
 from typing import Union
 
 from fastapi import APIRouter, Request, Depends, Query, HTTPException
@@ -9,13 +10,16 @@ from sqlalchemy.orm import joinedload
 from starlette.responses import RedirectResponse, HTMLResponse
 from starlette.templating import _TemplateResponse
 
-from api.actions.auth import get_current_user_from_token
 from api.actions.point import _get_point_by_id
 from api.actions.position import _get_position_by_id
 from api.actions.user import _get_user_by_id
 from db.models import User, Position, Point, TypePay, Visit, Category
 from db.session import get_db
 import pandas as pd
+
+from reports.helpers import get_formatted_year_and_month
+from reports.managment.commands import upload_to_ydisk
+from reports.report import create_report, collecting_data
 
 router = APIRouter(
     prefix="",
@@ -415,4 +419,31 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
                 "output": output,
             }
         )
+    return RedirectResponse(url='/login')
+
+
+@router.get('/report_info')
+async def get_report_info(request: Request, db: AsyncSession = Depends(get_db)):
+    token: str = request.query_params.get('token', None)
+    user_id: str = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        month, year = get_formatted_year_and_month()
+        # month, year = '10', 2023
+        data, hours_data = await collecting_data(month, year, db)
+        try:
+            create_report(month, year, data, hours_data, db)
+            response = upload_to_ydisk(month, year)
+        except Exception as e:
+            response = e
+        return templates.TemplateResponse(
+            "report_info.html",
+            {
+                "user_id": user_id,
+                "token": token,
+                "request": request,
+                "response": response,
+            }
+        )
+
     return RedirectResponse(url='/login')
