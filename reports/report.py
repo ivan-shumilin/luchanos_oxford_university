@@ -96,6 +96,8 @@ def create_list_by_point(wb,
                          name_list,
                          data,
                          total_hours_month,
+                         month,
+                         year,
                          # types_pay,
                          main_fontstyle_bold_year,
                          main_fontstyle_bold_month,
@@ -110,7 +112,7 @@ def create_list_by_point(wb,
 
     # month, year = get_formatted_year_and_month()
     # days_amount = get_days_in_month(year, int(month))
-    month, year = '10', 2023
+    # month, year = '10', 2023
     days_amount = get_days_in_month(year, int(month))
 
     str_month = get_name_month(month)
@@ -349,6 +351,8 @@ def create_report(month: str, year: int, data: Dict, total_hours_month: Dict, db
                              point,
                              data[point],
                              total_hours_month,
+                             month,
+                             year,
                              # types_pay,
                              main_fontstyle_bold_year,
                              main_fontstyle_bold_month,
