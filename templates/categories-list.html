@@ -1,0 +1,79 @@
+{% extends "nav.html" %}
+{% block title %}Категории{% endblock %}
+{% block title_page %}Категории{% endblock %}
+{% block user_name %}{% endblock %}
+{% block main %}
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Список категорий</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+              <tr>
+                <th>Название</th>
+                <th>Кол-во должностей</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for category in categories %}
+                <tr>
+                  <td>
+                      <a href="/category?user_id={{ user_id }}&token={{ token }}&category_id={{ category.id }}">
+                        {{ category.name }}
+                      </a>
+                  </td>
+                  <td>{{ category.count }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts_footer %}
+<!-- DataTables  & Plugins -->
+<script src="static/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="static/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="static/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="static/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="static/plugins/jszip/jszip.min.js"></script>
+<script src="static/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="static/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+$(function () {
+$("#example1").DataTable({
+  "responsive": true, "lengthChange": true, "autoWidth": false,
+  "buttons": ["excel", "pdf", "print", "colvis"]
+}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+$('#example2').DataTable({
+  "paging": true,
+  "lengthChange": false,
+  "searching": false,
+  "ordering": true,
+  "info": true,
+  "autoWidth": false,
+  "responsive": true,
+});
+});
+</script>
+{% endblock %}

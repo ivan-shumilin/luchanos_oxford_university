@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.models import PortalRole, Point, TypePay, User, Position, Visit
+from db.models import PortalRole, Point, TypePay, User, Position, Visit, Category
 
 
 ###########################################################
@@ -231,6 +231,60 @@ class PointDAL:
         update_point_id_row = res.fetchone()
         if update_point_id_row is not None:
             return update_point_id_row[0]
+
+
+class CategoryDAL:
+    """Data Access Layer for operating category info"""
+
+    def __init__(self, db_session: AsyncSession):
+        self.db_session = db_session
+
+    async def create_category(
+        self,
+        name: str,
+    ) -> Category:
+        new_category = Category(
+            name=name,
+        )
+        self.db_session.add(new_category)
+        await self.db_session.flush()
+        return new_category
+
+    async def delete_category(self, category_id: int) -> Union[int, None]:
+        query = (
+            update(Category)
+            .where(and_(Category.id == category_id, Category.is_active == True))
+            .values(is_active=False)
+            .returning(Category.id)
+        )
+        res = await self.db_session.execute(query)
+        deleted_category_id_row = res.fetchone()
+        if deleted_category_id_row is not None:
+            return deleted_category_id_row[0]
+
+    async def update_category(self, category_id: int, **kwargs) -> Union[int, None]:
+        query = (
+            update(Category)
+            .where(Category.id == category_id)
+            .values(kwargs)
+            .returning(Category.id)
+        )
+        res = await self.db_session.execute(query)
+        update_category_id_row = res.fetchone()
+        if update_category_id_row is not None:
+            return update_category_id_row[0]
+
+    async def get_category_by_name(self, category_name: str) -> Union[Category, None]:
+        query = select(Category).where(Category.name == category_name)
+        res = await self.db_session.scalar(query)
+        if res is not None:
+            return res
+
+    async def get_category_by_id(self, category_id: int) -> Union[Category, None]:
+        query = select(Category).where(Category.id == category_id)
+        res = await self.db_session.scalar(query)
+        if res is not None:
+            return res
 
 
 class TypePayDAL:

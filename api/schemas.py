@@ -168,6 +168,25 @@ class TypePayShow(TunedModel):
     is_active: bool
 
 
+class CategoryCreate(BaseModel):
+    name: str
+
+
+class ShowCategory(TunedModel):
+    id: int
+    name: str
+
+
+class CategoryShow(TunedModel):
+    id: int
+    name: str
+    is_active: bool
+
+
+class DeleteCategoryResponse(BaseModel):
+    deleted_category_id: int
+
+
 class VisitCreate(TunedModel):
     user_id: uuid.UUID
     point: int

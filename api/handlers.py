@@ -10,6 +10,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.actions.auth import get_current_user_from_token
+from api.actions.category import _get_category_by_name, _update_category, _create_new_category, _get_category_by_id, \
+    _delete_category
 from api.actions.point import _create_new_point, _create_new_type_pay, _get_point_by_id, _delete_point, _update_point, \
     _get_point_by_address
 from api.actions.position import _create_new_position, _get_position_by_id, _delete_position, _update_position, \
@@ -21,7 +23,8 @@ from api.actions.user import _update_user
 from api.actions.user import check_user_permissions
 from api.actions.visit import _create_new_visit
 from api.schemas import DeleteUserResponse, PositionCreate, ShowPosition, PointCreate, ShowPoint, TypePayCreate, \
-    TypePayShow, VisitCreate, VisitShow, DeletePointResponse, ShowUser
+    TypePayShow, VisitCreate, VisitShow, DeletePointResponse, ShowUser, CategoryCreate, ShowCategory, \
+    DeleteCategoryResponse
 from api.schemas import ShowUser
 from api.schemas import UpdatedUserResponse
 from api.schemas import UpdateUserRequest
@@ -458,3 +461,76 @@ async def create_visit(body: VisitCreate, db: AsyncSession = Depends(get_db)) ->
     except IntegrityError as err:
         logger.error(err)
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
+
+
+@user_router.post("/category")
+async def create_category(body: CategoryCreate, db: AsyncSession = Depends(get_db)):
+    category = await _get_category_by_name(body.name, db)
+
+    if category:
+        try:
+            data = {
+                "name": body.name,
+                "is_active": True
+            }
+            await _update_category(data, category.id, db)
+            return ShowCategory(
+                id=category.id,
+                name=category.name
+            )
+        except IntegrityError as err:
+            logger.error(err)
+            raise HTTPException(status_code=503, detail=f"Database error: {err}")
+    try:
+        return await _create_new_category(body, db)
+    except IntegrityError as err:
+        logger.error(err)
+        raise HTTPException(status_code=503, detail=f"Database error: {err}")
+
+
+@user_router.put("/category")
+async def update_category(category_id: int,
+                          body: CategoryCreate,
+                          db: AsyncSession = Depends(get_db),
+                          ) -> Union[int, None]:
+
+    category = await _get_category_by_id(category_id, db)
+
+    if category is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"name": f"Категория {body.name} не найдена."}
+        )
+
+    try:
+        data = {
+            "name": body.name,
+        }
+        return await _update_category(data, category_id, db)
+
+    except IntegrityError as err:
+        logger.error(err)
+        raise HTTPException(
+            status_code=503,
+            detail={"name": f"Database error: {err}"}
+        )
+
+
+@user_router.delete("/category")
+async def delete_category(
+        category_id: int,
+        db: AsyncSession = Depends(get_db),
+) -> DeleteCategoryResponse:
+    category_for_deletion = await _get_category_by_id(category_id, db)
+
+    if category_for_deletion is None:
+        raise HTTPException(
+            status_code=404, detail=f"Category with id {category_id} not found."
+        )
+
+    deleted_category_id = await _delete_category(category_id, db)
+    if deleted_category_id is None:
+        raise HTTPException(
+            status_code=404, detail=f"Cant delete point with id {category_id}."
+        )
+    return DeleteCategoryResponse(deleted_category_id=deleted_category_id)
