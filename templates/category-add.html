@@ -1,0 +1,156 @@
+{% extends "nav.html" %}
+{% block title %}Добавление категории{% endblock %}
+{% block title_page %}Категория{% endblock %}
+{% block user_name %}User name{% endblock %}
+{% block main %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Добавить категорию</h3>
+          </div>
+          <form>
+            <div class="card-body">
+              <div class="form-group">
+                <input id="name" onclick="deleteError()" type="text" class="form-control str" placeholder="Название">
+                <span id="name-error" class="error invalid-feedback"></span>
+              </div>
+            </div>
+          </form>
+            <div class="card-footer">
+              <button onclick="createCategory()" class="btn btn-primary">Добавить</button>
+              <span id="terms-error" class="error invalid-feedback" style="display: inline;"></span>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-warning card-outline" style="display: none;">
+    <div class="card-header">
+      <h3 class="card-title">
+        <i class="fas fa-edit"></i>
+        Уведомления
+      </h3>
+    </div>
+    <div class="card-body">
+      <button id="success-mg" type="button" class="btn btn-success toastrDefaultSuccess">
+        Категория успешно добавлена
+      </button>
+    <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+  </div>
+  </div>
+</section>
+
+<!-- InputMask -->
+<script src="static/js/imask.js"></script>
+
+<script>
+
+  // ###################
+  // Запросы по API   ##
+  // ###################
+  const createCategoryAPI = async function(data) {
+      let url = '/user/category'
+      let body = {
+        "name": data["name"].value,
+      };
+
+      let response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;',
+        },
+        body: JSON.stringify(body)
+      });
+      let result = await response;
+      return result;
+  }
+
+
+  // ###################
+  // Обработка формы  ##
+  // ###################
+  async function createCategory() {
+    let data = {
+      "name": document.getElementById('name'),
+    }
+
+    // проверка формы
+    let isOK = validationForm(data);
+
+    if (isOK) {
+      let res = await createCategoryAPI(data);
+      if (res.ok) {
+        console.log("Категория создана")
+        document.getElementById("success-mg").click()
+        deleteValue();
+      } else {
+        document.getElementById('terms-error').innerHTML = `Ошибка сервера - код (${res.status})`
+      }
+    }
+  }
+
+  function validationForm(data) {
+    var isOK = true
+    var str = new RegExp("[^а-яА-Яa-zA-ZёЁ+/)/(/-/'/ /./,-]+");
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+      // проверка каждого поля. все поля должны быть заполнены
+      if (!control.value & !control.classList.contains('none-true')) {
+        isOK = false
+        control.classList.add('is-invalid');
+        document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
+      }
+    });
+
+    return isOK
+  }
+
+  function deleteError() {
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+      if (control.classList.contains('is-invalid')) {
+        control.classList.remove('is-invalid');
+      }
+    });
+    document.getElementById('terms-error').innerHTML = ""
+  }
+
+  function deleteValue() {
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(control => {
+      control.value = "";
+      document.getElementById('terms-error').innerHTML = ""
+    });
+  }
+
+  </script>
+
+  {% endblock %}
+
+  {% block scripts_footer %}
+  <script>
+    $(function() {
+      var Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      });
+
+      $('.swalDefaultSuccess').click(function() {
+        Toast.fire({
+          icon: 'success',
+          title: 'Категория успешно добавлена'
+        })
+      });
+
+      $('.toastrDefaultSuccess').click(function() {
+        toastr.success('Категория успешно добавлена')
+      });
+    });
+  </script>
+  {% endblock %}

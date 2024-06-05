@@ -160,6 +160,31 @@
             </ul>  
           </li>
 
+            <!-- Категории -->
+          <li class="nav-item">
+            <a id="categoriers" class="nav-link">
+              <i class="nav-icon fas fa-list text-olive"></i>
+              <p>
+                Категории
+                <i class="fas fa-angle-left right text-olive"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
+                <a href="categories-list/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+                  <i class="nav-icon fas fa-copy"></i>
+                  <p>Список</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="category-add/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+                  <i class="nav-icon far fa-plus-square"></i>
+                  <p>Добавить</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
           <!-- Документация -->
           <li class="nav-item">
             <a id ="user-documentation" class="nav-link">
