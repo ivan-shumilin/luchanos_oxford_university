@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models import Visit, User, Point, Category, Position, TypePay
 from reports.helpers import formatted_full_name, get_formatted_year_and_month, get_days_in_month, get_final_cell, \
-    get_name_month, get_unvisited_day, is_weekend, color_weekend, get_work_day_amount
+    get_name_month, get_unvisited_day, is_weekend, color_weekend, get_work_day_amount, rounding_down, rounding_up
 
 DELTA_MOSCOW_TIME = datetime.timedelta(hours=3)
 
@@ -36,8 +36,8 @@ async def collecting_data(month, year, db: AsyncSession) -> (Dict, Dict):
             Point.is_active == True,
             Category.is_active == True,
             Visit.is_active == True,
-            extract('month', Visit.created_at) == int(month),
-            extract('year', Visit.created_at) == year
+            extract('month', Visit.created_at) == int(10),
+            extract('year', Visit.created_at) == 2023
         )
         )
         .order_by(Visit.created_at.desc())
@@ -65,8 +65,10 @@ async def collecting_data(month, year, db: AsyncSession) -> (Dict, Dict):
     total_hours_month = {}
 
     for (category, user, position, type_pay, date), row in result.iterrows():
-        min_time = (row[('time', 'min')] + DELTA_MOSCOW_TIME).hour + 1
-        max_time = (row[('time', 'max')] + DELTA_MOSCOW_TIME).hour
+        # min_time = (row[('time', 'min')] + DELTA_MOSCOW_TIME).hour + 1
+        # max_time = (row[('time', 'max')] + DELTA_MOSCOW_TIME).hour
+        min_time = rounding_down((row[('time', 'min')] + DELTA_MOSCOW_TIME))
+        max_time = rounding_up((row[('time', 'max')] + DELTA_MOSCOW_TIME))
 
         if min_time > max_time:
             max_time = min_time
@@ -184,8 +186,8 @@ def create_list_by_point(wb,
 
                 day_hours = day_info['total_hours']
 
-                if day_info['type_pay'] in (3, 4) and day_hours != 0: # оклад или ставка за выход
-                    day_hours = 8
+                # if day_info['type_pay'] in (3, 4) and day_hours != 0: # оклад или ставка за выход
+                #     day_hours = 8
 
                 color_weekend(year, month, day, day_hours, row, main_fontstyle_hour, main_fontstyle_hour_weekends, ws)
 
