@@ -1,13 +1,12 @@
 import datetime
-from time import sleep
 from typing import Union
 
-from fastapi import APIRouter, Request, Depends, Query, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select, and_, func, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
-from starlette.responses import RedirectResponse, HTMLResponse
+from starlette.responses import RedirectResponse
 from starlette.templating import _TemplateResponse
 
 from api.actions.category import _get_category_by_id
