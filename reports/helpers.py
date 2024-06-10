@@ -109,3 +109,18 @@ def get_work_day_amount(year: int, month: str) -> (int, int):
 #         all_types[iter_type.id] = iter_type.name
 #     return all_types
 
+
+def rounding_down(time_in) -> int:
+    """ Округляет вниз если работник отемтился в течение получаса от начала смены """
+
+    if time_in.minute <= 30:
+        return time_in.hour
+    return time_in.hour + 1
+
+
+def rounding_up(time_out) -> int:
+    """ Округляет вверх если работник отемтился в течение получаса до конца смены """
+
+    if time_out.minute >= 30:
+        return time_out.hour + 1
+    return time_out.hour

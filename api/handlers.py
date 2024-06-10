@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,9 +29,10 @@ from api.schemas import ShowUser
 from api.schemas import UpdatedUserResponse
 from api.schemas import UpdateUserRequest
 from api.schemas import UserCreate
-from db.models import User, Position
+from db.models import User, Position, PortalRole
 from db.session import get_db
 from api.actions.scripts import send_messang, restore_db
+from hashing import Hasher
 
 logger = getLogger(__name__)
 
@@ -225,6 +226,40 @@ async def revoke_admin_privilege(
         logger.error(err)
         raise HTTPException(status_code=503, detail=f"Database error: {err}")
     return UpdatedUserResponse(updated_user_id=updated_user_id)
+
+
+@user_router.patch("/change_password")
+async def change_user_password(user_id: UUID, new_password: str,
+                               db: AsyncSession = Depends(get_db),
+                               current_user: User = Depends(get_current_user_from_token)):
+    if PortalRole.ROLE_PORTAL_SUPERADMIN not in current_user.roles:
+        raise HTTPException(
+            status_code=403,
+            detail={"name": f"У пользователя {current_user.name} недостаточно прав"}
+        )
+
+    target_user = _get_user_by_id(user_id, db)
+    if not target_user:
+        raise HTTPException(
+            status_code=404,
+            detail={"name": f"Пользователь {user_id} не найден"}
+        )
+
+    try:
+        query = update(User).where(User.user_id == user_id).values(
+            hashed_password=Hasher.get_password_hash(new_password))
+        await db.execute(query)
+        await db.commit()
+
+        return {
+            "status": 200,
+            "detail": {"name": f"Пароль обновлен"}
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"name": f"Ошибка сервера {e}"}
+        )
 
 
 @user_router.get("/", response_model=ShowUser)
