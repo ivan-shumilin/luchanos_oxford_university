@@ -443,15 +443,16 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
         v.full_name = full_name
 
         try:
-            point = await db.execute(select(Point).where(Point.id == v.point))
+            point = await db.execute(select(Point).where(and_(Point.id == v.point, Point.is_active)))
             point = point.scalar()
             point = f'{point.name}'
         except:
-            point = v.point
+            point = '' #v.point
         v.point_name = point
 
     # Преобразование данных в DataFrame
-    df = pd.DataFrame([(str(v.created_at.date()), str(v.full_name), str(v.point_name), v.created_at) for v in visits],
+    df = pd.DataFrame([(str(v.created_at.date()), str(v.full_name), str(v.point_name), v.created_at) for v in visits
+                       if v.point_name != ''],
                       columns=['date', 'user', 'point', 'time'])
 
     # Группировка по дате и пользователю
