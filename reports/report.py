@@ -36,8 +36,8 @@ async def collecting_data(month, year, db: AsyncSession) -> (Dict, Dict):
             Point.is_active == True,
             Category.is_active == True,
             Visit.is_active == True,
-            extract('month', Visit.created_at) == int(10),
-            extract('year', Visit.created_at) == 2023
+            extract('month', Visit.created_at) == int(month),
+            extract('year', Visit.created_at) == year
         )
         )
         .order_by(Visit.created_at.desc())

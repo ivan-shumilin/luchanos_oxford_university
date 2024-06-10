@@ -3,6 +3,7 @@ from typing import Union
 
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
+from loguru import logger
 from sqlalchemy import select, and_, func, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -430,29 +431,26 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 
-    visits = await db.execute(select(Visit))
-    visits = visits.scalars().all()
-
-    for v in visits:
-        try:
-            user = await db.execute(select(User).where(User.user_id == v.user_id))
-            user = user.scalar()
-            full_name = f'{user.name} {user.surname}'
-        except:
-            full_name = v.user_id
-        v.full_name = full_name
-
-        try:
-            point = await db.execute(select(Point).where(and_(Point.id == v.point, Point.is_active)))
-            point = point.scalar()
-            point = f'{point.name}'
-        except:
-            point = '' #v.point
-        v.point_name = point
+    query = (
+        select(
+            Visit.created_at,
+            User.name + ' ' + User.surname,
+            Point.name,
+        ).select_from(Visit)
+        .join(User, Visit.user_id == User.user_id)
+        .join(Point, User.point == Point.id)
+        .where(and_(
+            User.is_active == True,
+            Point.is_active == True,
+            Visit.is_active == True,
+            )
+        )
+    )
+    visits = await db.execute(query)
+    visits = visits.all()
 
     # Преобразование данных в DataFrame
-    df = pd.DataFrame([(str(v.created_at.date()), str(v.full_name), str(v.point_name), v.created_at) for v in visits
-                       if v.point_name != ''],
+    df = pd.DataFrame([(str(v[0].date()), v[1], v[2], v[0]) for v in visits],
                       columns=['date', 'user', 'point', 'time'])
 
     # Группировка по дате и пользователю
@@ -505,9 +503,16 @@ async def get_report_info(request: Request, db: AsyncSession = Depends(get_db)):
         data, hours_data = await collecting_data(month, year, db)
         try:
             create_report(month, year, data, hours_data, db)
+        except Exception as e:
+            response = e
+            logger.error(e)
+            print(e)
+        try:
             response = upload_to_ydisk(month, year)
         except Exception as e:
             response = e
+            logger.error(e)
+            print(e)
         return templates.TemplateResponse(
             "report_info.html",
             {

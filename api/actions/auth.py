@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from jose import JWTError
+from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -49,10 +50,13 @@ async def get_current_user_from_token(
         )
         email: str = payload.get("sub")
         if email is None:
+            logger.error('Отсутсвует почта')
             raise credentials_exception
     except JWTError:
+        logger.error(JWTError)
         raise credentials_exception
     user = await _get_user_by_email_for_auth(email=email, session=db)
     if user is None:
+        logger.error('Пользователь не найден')
         raise credentials_exception
     return user

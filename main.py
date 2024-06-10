@@ -1,15 +1,18 @@
 import json
 import logging
 from time import sleep
+from uuid import uuid4
 
 import sentry_sdk
 import uvicorn
 import aiohttp
 from fastapi import FastAPI, Request, Depends
 from fastapi.routing import APIRouter
+from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 from starlette_exporter import handle_metrics
 from starlette_exporter import PrometheusMiddleware
@@ -46,6 +49,11 @@ sentry_sdk.init(
 
 # create instance of the app
 app = FastAPI(title="luchanos-oxford-university")
+
+# Логгирование
+logger.remove()
+logger.add("info.log", format="Log: [{time} -- {level} -- {message} {file}:{line} - {function})]", level="INFO", enqueue=True)
+
 
 # origins = [
 #     "http://localhost:3000",
