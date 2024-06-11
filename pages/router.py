@@ -494,6 +494,7 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
 
 @router.get('/report_info')
 async def get_report_info(request: Request, db: AsyncSession = Depends(get_db)):
+    logger.info("Создание отчета посещаемости")
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 

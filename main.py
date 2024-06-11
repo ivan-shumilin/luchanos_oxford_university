@@ -52,7 +52,7 @@ app = FastAPI(title="luchanos-oxford-university")
 
 # Логгирование
 logger.remove()
-logger.add("info.log", format="Log: [{time} -- {level} -- {message} {file}:{line} - {function})]", level="INFO", enqueue=True)
+logger.add("info.log", format="Log: {time} -- {level} -- {message} -- {file}:{line} {function}", level="INFO", enqueue=True)
 
 
 # origins = [
@@ -124,12 +124,13 @@ async def check_user(obj, db):
         sleep(1)
     except Exception as err:
         print(err)
-        logging.error(f"Ошибка при выполнении запроса к базе данных: {e}")
+        logging.error(f"Ошибка при выполнении запроса к базе данных: {err}")
         user = None
 
     if user is None:
         answer = 'Вы не зарегистрированы в системе. Свяжитесь с администратором для регистрации.'
         print(answer)
+        logger.error(answer)
 
     return user, answer
 

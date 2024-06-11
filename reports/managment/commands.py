@@ -1,5 +1,6 @@
 import requests
 from envparse import Env
+from loguru import logger
 
 from reports.report import get_formatted_year_and_month
 
@@ -12,6 +13,7 @@ headers = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Au
 
 
 def upload_file(loadfile, savefile, replace=True):
+    logger.info(f"Загрузка отчета: {loadfile} на диск: {savefile} ")
     """Загрузка файла.
     loadfile: Путь к загружаемому файлу
     savefile: Путь к файлу на Диске

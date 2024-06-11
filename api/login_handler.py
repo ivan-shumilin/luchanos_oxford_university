@@ -5,6 +5,7 @@ from fastapi import Depends
 from fastapi import HTTPException
 from fastapi import status
 from fastapi.security import OAuth2PasswordRequestForm
+from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import settings
@@ -22,6 +23,7 @@ async def login_for_access_token(
 ):
     user = await authenticate_user(form_data.username, form_data.password, db)
     if not user:
+        logger.error(f"Invalid username or password")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
