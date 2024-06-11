@@ -18,7 +18,7 @@ from db.models import User, Position, Point, TypePay, Visit, Category
 from db.session import get_db
 import pandas as pd
 
-from reports.helpers import get_formatted_year_and_month
+from reports.helpers import get_formatted_year_and_month, rounding_down, rounding_up
 from reports.managment.commands import upload_to_ydisk
 from reports.report import create_report, collecting_data
 
@@ -464,8 +464,8 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
     # Преобразование результата в список словарей
     output = []
     for (date, user), row in result.iterrows():
-        min_time = (row[('time', 'min')] + DELTA_MOSCOW_TIME).hour + 1
-        max_time = (row[('time', 'max')] + DELTA_MOSCOW_TIME).hour
+        min_time = rounding_down((row[('time', 'min')] + DELTA_MOSCOW_TIME))
+        max_time = rounding_up((row[('time', 'max')] + DELTA_MOSCOW_TIME))
         if min_time > max_time:
             max_time = min_time
 
