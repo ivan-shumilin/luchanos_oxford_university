@@ -1,5 +1,6 @@
 from typing import Union
 
+from loguru import logger
 from sqlalchemy import select
 
 from api.schemas import PointCreate, ShowPoint, TypePayCreate, TypePayShow, VisitCreate, VisitShow
@@ -8,6 +9,7 @@ from db.models import Point, User
 
 
 async def _create_new_point(body: PointCreate, session) -> ShowPoint:
+    logger.info(f"Создание нового заведения: {body.name}")
     async with session.begin():
         point_dal = PointDAL(session)
         point = await point_dal.create_point(
@@ -25,6 +27,7 @@ async def _create_new_point(body: PointCreate, session) -> ShowPoint:
 
 
 async def _get_point_by_id(point_id, session) -> Union[Point, None]:
+    logger.info(f"Получение заведения по id: {point_id}")
     async with session.begin():
         point_dal = PointDAL(session)
         point = await point_dal.get_point_by_id(
@@ -35,6 +38,7 @@ async def _get_point_by_id(point_id, session) -> Union[Point, None]:
 
 
 async def _get_point_by_address(point_address, session) -> Union[Point, None]:
+    logger.info(f"Получение заведения по адресу: {point_address}")
     async with session.begin():
         point_dal = PointDAL(session)
         point = await point_dal.get_point_by_address(
@@ -45,12 +49,14 @@ async def _get_point_by_address(point_address, session) -> Union[Point, None]:
 
 
 async def get_users_by_point(point_id: int, db):
+    logger.info(f"Получение всех пользователей в заведение {point_id}")
     query = select(User).where(User.point == point_id)
     result = await db.execute(query)
     return result.scalars().all()
 
 
 async def _delete_point(point_id, session) -> Union[int, None]:
+    logger.info(f"Удаление заведения с id {point_id}")
     async with session.begin():
         point_dal = PointDAL(session)
         deleted_point_id = await point_dal.delete_point(
@@ -66,6 +72,7 @@ async def _delete_point(point_id, session) -> Union[int, None]:
 async def _update_point(
         updated_point_params: dict, point_id: int, session
 ) -> Union[int, None]:
+    logger.info(f"Обновление заведения с id {point_id}: {updated_point_params}")
     async with session.begin():
         point_dal = PointDAL(session)
         updated_point_id = await point_dal.update_point(
@@ -75,6 +82,7 @@ async def _update_point(
 
 
 async def _create_new_type_pay(body: TypePayCreate, session) -> TypePayShow:
+    logger.info(f"Создание способа оплаты {body.name}")
     async with session.begin():
         type_pay_dal = TypePayDAL(session)
         type_pay = await type_pay_dal.create_type_pay(

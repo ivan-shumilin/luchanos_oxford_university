@@ -1,8 +1,6 @@
 import json
 import logging
 from time import sleep
-from uuid import uuid4
-
 import sentry_sdk
 import uvicorn
 import aiohttp
@@ -18,7 +16,7 @@ from starlette_exporter import handle_metrics
 from starlette_exporter import PrometheusMiddleware
 
 import settings
-from api.actions.visit import _create_new_visit
+from api.actions.visit import _create_new_visit, _check_visit
 from api.handlers import user_router
 from api.login_handler import login_router
 from api.schemas import VisitCreate
@@ -52,7 +50,7 @@ app = FastAPI(title="luchanos-oxford-university")
 
 # Логгирование
 logger.remove()
-logger.add("info.log", format="Log: [{time} -- {level} -- {message} {file}:{line} - {function})]", level="INFO", enqueue=True)
+logger.add("info.log", format="Log: {time} -- {level} -- {message} -- {file}:{line} {function}", level="INFO", enqueue=True)
 
 
 # origins = [
@@ -124,12 +122,13 @@ async def check_user(obj, db):
         sleep(1)
     except Exception as err:
         print(err)
-        logging.error(f"Ошибка при выполнении запроса к базе данных: {e}")
+        logging.error(f"Ошибка при выполнении запроса к базе данных: {err}")
         user = None
 
     if user is None:
         answer = 'Вы не зарегистрированы в системе. Свяжитесь с администратором для регистрации.'
         print(answer)
+        logger.error(answer)
 
     return user, answer
 
@@ -181,6 +180,7 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
     # проверка, есть ли геоданные
     point_name: str = ""
     answer: str = "Ответ сервера"
+    answer_position: str = "Ответ сервера (геопозиция)"
     if obj.message.location == None:
         answer = 'Для отправки геоданных нажмите кнопку "Отправить локацию"'
     else:
@@ -196,10 +196,14 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
                     }
                 )
                 try:
+                    if not await _check_visit(user.user_id, db):
+                        answer = 'Начало смены\n'
+                    else:
+                        answer = 'Конец смены\n'
+                    answer_position = f'Данные записаны. Местоположение: {point.name}\n'
+                    print(answer)
                     res = await _create_new_visit(body, db)
                     print(res)
-                    answer = f'Данные записаны. Местоположение: {point.name}'
-                    print(answer)
                 except:
                     answer = 'Возникла ошибка при записи данных. Попробуйте еще раз.'
                     print(answer)
@@ -211,14 +215,27 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
         'reply_markup': json.dumps(reply_markup)
     }
 
+    data_position = {
+        'chat_id': obj.message.chat.id,
+        'text': answer_position,
+        'reply_markup': json.dumps(reply_markup)
+    }
+
     async with aiohttp.ClientSession() as session:
         async with session.post(
                 f'https://api.telegram.org/bot{TG_API}/sendMessage',
                 data=data
         ) as response:
-            print(response.status)
+            print(f"Shift info message status: {response.status}")
 
-    return ({'status': 'OK'})
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+                f'https://api.telegram.org/bot{TG_API}/sendMessage',
+                data=data_position
+        ) as response:
+            print(f"Position info message status: {response.status}")
+
+    return {'status': 'OK'}
 
 
 if __name__ == "__main__":

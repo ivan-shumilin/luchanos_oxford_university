@@ -2,6 +2,7 @@ from typing import Union
 from uuid import UUID
 
 from fastapi import HTTPException
+from loguru import logger
 
 from api.schemas import ShowUser
 from api.schemas import UserCreate
@@ -12,6 +13,7 @@ from hashing import Hasher
 
 
 async def _create_new_user(body: UserCreate, session) -> ShowUser:
+    logger.info(f"Создание нового пользователя {body.name} {body.surname} {body.point} {body.tg_username}")
     async with session.begin():
         user_dal = UserDAL(session)
         user = await user_dal.create_user(
@@ -45,6 +47,7 @@ async def _create_new_user(body: UserCreate, session) -> ShowUser:
 
 
 async def _delete_user(user_id, session) -> Union[UUID, None]:
+    logger.info(f"Удаление пользователя {user_id}")
     async with session.begin():
         user_dal = UserDAL(session)
         deleted_user_id = await user_dal.delete_user(
@@ -56,6 +59,7 @@ async def _delete_user(user_id, session) -> Union[UUID, None]:
 async def _update_user(
     updated_user_params: dict, user_id: UUID, session
 ) -> Union[UUID, None]:
+    logger.info(f"Обновление пользователя {user_id}: {updated_user_params}")
     async with session.begin():
         user_dal = UserDAL(session)
         updated_user_id = await user_dal.update_user(
@@ -65,6 +69,7 @@ async def _update_user(
 
 
 async def _get_user_by_id(user_id, session) -> Union[User, None]:
+    logger.info(f"Получение пользователя {user_id} по id")
     async with session.begin():
         user_dal = UserDAL(session)
         user = await user_dal.get_user_by_id(
@@ -75,6 +80,7 @@ async def _get_user_by_id(user_id, session) -> Union[User, None]:
 
 
 async def _get_user_by_email(email, session) -> Union[User, None]:
+    logger.info(f"Получение пользователя {email} по email")
     async with session.begin():
         user_dal = UserDAL(session)
         user = await user_dal.get_user_by_email(
@@ -85,6 +91,7 @@ async def _get_user_by_email(email, session) -> Union[User, None]:
 
 
 async def _get_user_by_tg(tg_username, session) -> Union[User, None]:
+    logger.info(f"Получение пользователя {tg_username} по никнейму телеграмма")
     async with session.begin():
         user_dal = UserDAL(session)
         user = await user_dal.get_user_by_tg(
@@ -95,6 +102,7 @@ async def _get_user_by_tg(tg_username, session) -> Union[User, None]:
 
 
 async def _get_user_by_phone(phone, session) -> Union[User, None]:
+    logger.info(f"Получение пользователя {phone} по номеру телефона")
     async with session.begin():
         user_dal = UserDAL(session)
         user = await user_dal.get_user_by_phone(
@@ -105,6 +113,7 @@ async def _get_user_by_phone(phone, session) -> Union[User, None]:
 
 
 def check_user_permissions(target_user: User, current_user: User) -> bool:
+    logger.info(f"Проверка пользовательских ({target_user.name} {target_user.surname}) расрешений")
     if PortalRole.ROLE_PORTAL_SUPERADMIN in target_user.roles:
         raise HTTPException(
             status_code=406, detail="Superadmin cannot be deleted via API."
