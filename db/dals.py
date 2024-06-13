@@ -1,8 +1,9 @@
 import uuid
+from datetime import date
 from typing import Union
 from uuid import UUID
 
-from sqlalchemy import and_
+from sqlalchemy import and_, extract
 from sqlalchemy import select
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -323,3 +324,12 @@ class VisitDAL:
         self.db_session.add(new_visit)
         await self.db_session.flush()
         return new_visit
+
+    async def check_visit(self, user_id: uuid.UUID) -> bool:
+        current_time = date.today()
+        query = select(Visit).where(and_(Visit.user_id == user_id,
+                                         extract('month', Visit.created_at) == current_time.month,
+                                         extract('year', Visit.created_at) == current_time.year,
+                                         extract('day', Visit.created_at) == current_time.day)
+                                    )
+        return await self.db_session.scalar(query)
