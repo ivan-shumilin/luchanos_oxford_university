@@ -1,0 +1,68 @@
+{% extends "nav.html" %}
+{% block title %}Бэкап{% endblock %}
+{% block title_page %}{% endblock %}
+{% block user_name %}{% endblock %}
+{% block main %}
+
+<style>
+._failed{ border-bottom: solid 4px red !important; }
+._failed i{  color:red !important;  }
+
+._success {
+    box-shadow: 0 15px 25px #00000019;
+    padding: 45px;
+    width: 100%;
+    text-align: center;
+    margin: 40px auto;
+    border-bottom: solid 4px #28a745;
+}
+
+._success i {
+    font-size: 55px;
+    color: #28a745;
+}
+
+._success h2 {
+    margin-bottom: 12px;
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-top: 10px;
+}
+
+._success p {
+    margin-bottom: 0px;
+    font-size: 18px;
+    color: #495057;
+    font-weight: 500;
+}
+</style>
+    {% if response == 'OK' %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="message-box _success">
+                     <i class="fa fa-check-circle" aria-hidden="true"></i>
+                    <h3>Бэкап сделан</h3>
+                    <p> Бэкап сохранен на <a href="https://disk.yandex.ru/d/vZ4sPVgq_Hq2oQ">диске</a></p>
+                    <p><a href="/admin?user_id={{ user_id }}&token={{ token }}">Вернуться к Dashboard</a></p>
+            </div>
+        </div>
+    </div>
+    <hr>
+    {% else %}
+
+    <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="message-box _success _failed">
+                     <i class="fa fa-times-circle" aria-hidden="true"></i>
+                    <h3>Произошла внутренняя ошибка!</h3>
+                    <p>Попробуйте снова или сообщите администратору</p>
+                    <p><a href="/admin?user_id={{ user_id }}&token={{ token }}">Вернуться к Dashboard</a></p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

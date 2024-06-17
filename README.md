@@ -80,7 +80,7 @@ pg_restore --clean --dbname=postgresql://admin:asDSqwBF23*@79.174.88.60:19832/ti
 
 ## ENVs
 
-Всего должно быть определено 3 среды в папке ./env_vars:
+Всего должно быть определено 4 среды в папке ./env_vars:
 
 1. **.env** 
 
@@ -115,6 +115,15 @@ pg_restore --clean --dbname=postgresql://admin:asDSqwBF23*@79.174.88.60:19832/ti
 + POSTGRES_USER
 + POSTGRES_PASSWORD
 + POSTGRES_DB
++ POSTGRES_PORT
++ POSTGRES_HOST
+
+4. **report.env** - используется для отправки отчета о посещаемости на яндекс диск
+
+Содержит:
+
++ TOKEN
+
 
 --- 
 ### Вставка в таблицу category
@@ -142,3 +151,19 @@ UPDATE public.position SET category_id = 1 WHERE category_id IS NULL;
 -- UPDATE public.position SET category_id = 2 WHERE category_id IS NULL;
 UPDATE public.category SET is_active = true WHERE category.is_active IS NULL;
 ```
+
+***
+
+## Дампы и бэкапы
+
++ Дамп
+```angular2html
+ pg_dump -U {user} -h {host} -p {port} -E UTF8 -F tar -f {path}/{dumn name}.tar {db name}
+```
+
++ Бэкап
+```angular2html
+pg_restore -h {host} -p {port} -U {user} -d {db_name - т.е куда} -v {path}/{dumn name}.tar   
+```
+
+---

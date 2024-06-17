@@ -18,8 +18,9 @@ from db.models import User, Position, Point, TypePay, Visit, Category
 from db.session import get_db
 import pandas as pd
 
+from managment.dump import dump
 from reports.helpers import get_formatted_year_and_month, rounding_down, rounding_up
-from reports.managment.commands import upload_to_ydisk
+from managment.commands import upload_to_ydisk
 from reports.report import create_report, collecting_data
 
 router = APIRouter(
@@ -509,7 +510,9 @@ async def get_report_info(request: Request, db: AsyncSession = Depends(get_db)):
             logger.error(e)
             print(e)
         try:
-            response = upload_to_ydisk(month, year)
+            loadfile = f'static/reports/report_{month}_{year}.xlsx'  # локальный путь
+            savefile = f'report_time_tracking/report_{month}_{year}.xlsx'  # путь на диске
+            response = await upload_to_ydisk(loadfile, savefile)
         except Exception as e:
             response = e
             logger.error(e)
@@ -524,4 +527,23 @@ async def get_report_info(request: Request, db: AsyncSession = Depends(get_db)):
             }
         )
 
+    return RedirectResponse(url='/login')
+
+
+@router.get('/dump')
+async def dump_bd(request: Request):
+    token: str = request.query_params.get('token', None)
+    user_id: str = request.query_params.get('user_id', None)
+
+    if token and user_id:
+        response = await dump()
+        return templates.TemplateResponse(
+            "backup.html",
+            {
+                "user_id": user_id,
+                "token": token,
+                "request": request,
+                "response": response,
+            }
+        )
     return RedirectResponse(url='/login')

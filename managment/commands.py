@@ -12,7 +12,7 @@ URL = 'https://cloud-api.yandex.net/v1/disk/resources'
 headers = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': f'OAuth {TOKEN}'}
 
 
-def upload_file(loadfile, savefile, replace=True):
+async def upload_file(loadfile, savefile, replace=True):
     logger.info(f"Загрузка отчета: {loadfile} на диск: {savefile} ")
     """Загрузка файла.
     loadfile: Путь к загружаемому файлу
@@ -27,12 +27,10 @@ def upload_file(loadfile, savefile, replace=True):
             return res
 
 
-def upload_to_ydisk(month, year):
-
-    loadfile = f'static/reports/report_{month}_{year}.xlsx'  # локальный путь
-    savefile = f'report_time_tracking/report_{month}_{year}.xlsx'  # путь на диске
+async def upload_to_ydisk(loadfile, savefile):
     try:
-        upload_file(loadfile, savefile)
+        await upload_file(loadfile, savefile)
     except Exception as e:
         return f'Failed upload file {loadfile}: {e}'
     return f'OK'
+
