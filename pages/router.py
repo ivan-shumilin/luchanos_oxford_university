@@ -14,7 +14,7 @@ from api.actions.category import _get_category_by_id
 from api.actions.point import _get_point_by_id
 from api.actions.position import _get_position_by_id
 from api.actions.user import _get_user_by_id
-from db.models import User, Position, Point, TypePay, Visit, Category
+from db.models import User, Position, Point, TypePay, Visit, Category, PortalRole
 from db.session import get_db
 import pandas as pd
 
@@ -101,7 +101,8 @@ async def job_title_add(request: Request, token: str, user_id: str, db: AsyncSes
 
 
 @router.get("/job-title-list")
-async def job_title_list(request: Request, token: str, user_id: str, db: AsyncSession = Depends(get_db)):
+async def job_title_list(request: Request, token: str, user_id: str, db: AsyncSession = Depends(get_db),
+                         ):
     positions = await db.execute(
         select(Position).where(Position.is_active == True).options(joinedload(Position.category)))
     positions = positions.scalars().all()
@@ -499,7 +500,10 @@ async def get_report_info(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 
-    if token and user_id:
+    user = await _get_user_by_id(user_id, db)
+    is_admin = PortalRole.ROLE_PORTAL_SUPERADMIN in user.roles or PortalRole.ROLE_PORTAL_ADMIN in user.roles
+
+    if token and user_id and is_admin:
         month, year = get_formatted_year_and_month()
         # month, year = '10', 2023
         data, hours_data = await collecting_data(month, year, db)
@@ -531,11 +535,14 @@ async def get_report_info(request: Request, db: AsyncSession = Depends(get_db)):
 
 
 @router.get('/dump')
-async def dump_bd(request: Request):
+async def dump_bd(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 
-    if token and user_id:
+    user = await _get_user_by_id(user_id, db)
+    is_admin = PortalRole.ROLE_PORTAL_SUPERADMIN in user.roles or PortalRole.ROLE_PORTAL_ADMIN in user.roles
+
+    if token and user_id and is_admin:
         response = await dump()
         return templates.TemplateResponse(
             "backup.html",
