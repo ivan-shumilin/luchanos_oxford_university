@@ -1,10 +1,4 @@
 # luchanos_oxford_university
-p3d%s$*V=-Pa
-
-data base:
-имя бд: time_tracking
-пользователь: admin
-пароль: asDSqwBF23*
 
 Для поднятия сервисов баз для локальной разработки нужно запустить команду:
 
