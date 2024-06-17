@@ -11,7 +11,7 @@ from starlette import status
 
 import settings
 from db.dals import UserDAL
-from db.models import User
+from db.models import User, PortalRole
 from db.session import get_db
 from hashing import Hasher
 
@@ -57,6 +57,10 @@ async def get_current_user_from_token(
         raise credentials_exception
     user = await _get_user_by_email_for_auth(email=email, session=db)
     if user is None:
-        logger.error('Пользователь не найден')
+        logger.error(f'Пользователь не найден {email}')
         raise credentials_exception
+    if PortalRole.ROLE_PORTAL_SUPERADMIN not in user.roles and PortalRole.ROLE_PORTAL_ADMIN not in user.roles:
+        logger.error(f'Пользователь {user.name} {user.surname} не имеет достаточно прав')
+        raise credentials_exception
+
     return user

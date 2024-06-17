@@ -39,7 +39,11 @@ user_router = APIRouter()
 
 
 @user_router.post("/")
-async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> Union[UUID, None, ShowUser]:
+async def create_user(body: UserCreate,
+                      db: AsyncSession = Depends(get_db),
+                      current_user: User = Depends(get_current_user_from_token))\
+        -> Union[UUID, None, ShowUser]:
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: начинает создание сотрудника")
     user = await _get_user_by_tg(body.tg_username, db)
 
     # случай когда создают пользователя, который ранее был создан и впоследствии удален
@@ -93,7 +97,6 @@ async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> U
             detail={"name": f"Телефон {body.phone} уже используется."}
         )
     try:
-        logger.info(f"Создание нового пользователя {body.name} {body.surname} {body.point}")
         return await _create_new_user(body, db)
     except IntegrityError as err:
         logger.error(err)
@@ -107,7 +110,9 @@ async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)) -> U
 async def update_user(user_id: UUID,
                       body: UserCreate,
                       db: AsyncSession = Depends(get_db),
+                      current_user: User = Depends(get_current_user_from_token)
                       ) -> Union[UUID, None]:
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: начинает обновление сотрудника")
     user = await _get_user_by_id(user_id, db)
 
     if user is None:
@@ -145,6 +150,7 @@ async def delete_user(
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user_from_token),
 ) -> DeleteUserResponse:
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: начинает удаление сотрудника")
     user_for_deletion = await _get_user_by_id(user_id, db)
     if user_for_deletion is None:
         logger.error(f"Пользователь {user_id} не найден.")
@@ -172,7 +178,7 @@ async def grant_admin_privilege(
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user_from_token),
 ):
-    logger.info("Предоставление прав администратора")
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: Предоставление прав администратора сотруднику")
     if not current_user.is_superadmin:
         logger.error(f"{current_user.name} не имеет достаточно прав")
         raise HTTPException(status_code=403, detail="Forbidden.")
@@ -212,7 +218,7 @@ async def revoke_admin_privilege(
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user_from_token),
 ):
-    logger.info("Удаление прав администратора")
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: Удаление прав администратора у сотрудника")
     if not current_user.is_superadmin:
         raise HTTPException(status_code=403, detail="Forbidden.")
     if current_user.user_id == user_id:
@@ -245,7 +251,7 @@ async def revoke_admin_privilege(
 async def change_user_password(user_id: UUID, new_password: str,
                                db: AsyncSession = Depends(get_db),
                                current_user: User = Depends(get_current_user_from_token)):
-    logger.info(f"Смена пароля для пользователя {user_id}")
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: Смена пароля для пользователя {user_id}")
     if PortalRole.ROLE_PORTAL_SUPERADMIN not in current_user.roles:
         logger.error(f"Пользователь {current_user.name} {current_user.surname} не является администратором")
         raise HTTPException(
@@ -283,7 +289,9 @@ async def change_user_password(user_id: UUID, new_password: str,
 async def get_user_by_id(
         user_id: UUID,
         db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(get_current_user_from_token)
 ) -> ShowUser:
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: получение информации о сотруднике по его id")
     try:
         user = await _get_user_by_id(user_id, db)
     except:
@@ -312,7 +320,7 @@ async def update_user_by_id(
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user_from_token),
 ) -> UpdatedUserResponse:
-    logger.info(f"Начало обновление пользователя по id {user_id}")
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: Начало обновление сотрудника по id {user_id}")
     updated_user_params = body.dict(exclude_none=True)
     if updated_user_params == {}:
         logger.error("Обновление не может быть пустым")
@@ -343,9 +351,12 @@ async def update_user_by_id(
 
 
 @user_router.post("/position")
-async def create_position(body: PositionCreate, db: AsyncSession = Depends(get_db)) -> ShowPosition:
+async def create_position(body: PositionCreate,
+                          db: AsyncSession = Depends(get_db),
+                          current_user: User = Depends(get_current_user_from_token),
+                          ) -> ShowPosition:
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: начинает создание должности")
     position = await _get_position_by_name(body.name, db)
-
     if position:
         try:
             data = {
@@ -375,7 +386,9 @@ async def create_position(body: PositionCreate, db: AsyncSession = Depends(get_d
 async def delete_position(
         position_id: int,
         db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(get_current_user_from_token)
 ) -> DeletePointResponse:
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: начинает удаление должности")
     position_for_deletion = await _get_position_by_id(position_id, db)
 
     if position_for_deletion is None:
@@ -394,8 +407,9 @@ async def delete_position(
 
 
 @user_router.get("/positions")
-async def get_positions(db: AsyncSession = Depends(get_db)):
-    logger.info("Получение всех позиций")
+async def get_positions(db: AsyncSession = Depends(get_db),
+                        current_user: User = Depends(get_current_user_from_token)):
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: Получение всех должностей")
     positions = await db.execute(select(Position))
     positions = positions.scalars().all()
     return positions
@@ -405,8 +419,9 @@ async def get_positions(db: AsyncSession = Depends(get_db)):
 async def update_position(position_id: int,
                           body: PositionCreate,
                           db: AsyncSession = Depends(get_db),
+                          current_user: User = Depends(get_current_user_from_token)
                           ) -> Union[UUID, None]:
-    logger.info("Обновление должности {position_id}")
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: Обновление должности {position_id}")
     position = await _get_position_by_id(position_id, db)
 
     if position is None:
@@ -432,7 +447,11 @@ async def update_position(position_id: int,
 
 
 @user_router.post("/point")
-async def create_point(body: PointCreate, db: AsyncSession = Depends(get_db)) -> ShowPoint:
+async def create_point(body: PointCreate,
+                       db: AsyncSession = Depends(get_db),
+                       current_user: User = Depends(get_current_user_from_token)
+                       ) -> ShowPoint:
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: начинает создание заведения")
     point = await _get_point_by_address(body.address, db)
     if point:
         logger.info(f"Восстановление точки {body.name}")
@@ -463,8 +482,9 @@ async def create_point(body: PointCreate, db: AsyncSession = Depends(get_db)) ->
 async def delete_point(
         point_id: int,
         db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(get_current_user_from_token)
 ) -> DeletePointResponse:
-    logger.info(f"Удаление заведения {point_id}")
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: Удаление заведения {point_id}")
     point_for_deletion = await _get_point_by_id(point_id, db)
 
     if point_for_deletion is None:
@@ -486,8 +506,9 @@ async def delete_point(
 async def update_point(point_id: int,
                        body: PointCreate,
                        db: AsyncSession = Depends(get_db),
+                       current_user: User = Depends(get_current_user_from_token)
                        ) -> Union[UUID, None]:
-    logger.info(f"Обновление заведения {point_id}")
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: обновление заведения {point_id}")
     point = await _get_point_by_id(point_id, db)
 
     if point is None:
@@ -514,7 +535,11 @@ async def update_point(point_id: int,
 
 
 @user_router.post("/type_pay")
-async def create_type_pay(body: TypePayCreate, db: AsyncSession = Depends(get_db)) -> TypePayShow:
+async def create_type_pay(body: TypePayCreate,
+                          db: AsyncSession = Depends(get_db),
+                          current_user: User = Depends(get_current_user_from_token)
+                          ) -> TypePayShow:
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: начинает создание способа оплаты")
     try:
         return await _create_new_type_pay(body, db)
     except IntegrityError as err:
@@ -523,7 +548,10 @@ async def create_type_pay(body: TypePayCreate, db: AsyncSession = Depends(get_db
 
 
 @user_router.post("/visit")
-async def create_visit(body: VisitCreate, db: AsyncSession = Depends(get_db)) -> VisitShow:
+async def create_visit(body: VisitCreate,
+                       db: AsyncSession = Depends(get_db),
+                       current_user: User = Depends(get_current_user_from_token)) -> VisitShow:
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: начинает создание посещения")
     try:
         return await _create_new_visit(body, db)
     except IntegrityError as err:
@@ -532,8 +560,10 @@ async def create_visit(body: VisitCreate, db: AsyncSession = Depends(get_db)) ->
 
 
 @user_router.post("/category")
-async def create_category(body: CategoryCreate, db: AsyncSession = Depends(get_db)):
-    logger.info(f"Создание категории {body.name}")
+async def create_category(body: CategoryCreate,
+                          db: AsyncSession = Depends(get_db),
+                          current_user: User = Depends(get_current_user_from_token)):
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: cоздание категории {body.name}")
     category = await _get_category_by_name(body.name, db)
 
     if category:
@@ -561,8 +591,9 @@ async def create_category(body: CategoryCreate, db: AsyncSession = Depends(get_d
 async def update_category(category_id: int,
                           body: CategoryCreate,
                           db: AsyncSession = Depends(get_db),
+                          current_user: User = Depends(get_current_user_from_token)
                           ) -> Union[int, None]:
-    logger.info(f"Обновление категории с id {category_id}")
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: обновление категории с id {category_id}")
     category = await _get_category_by_id(category_id, db)
 
     if category is None:
@@ -589,8 +620,9 @@ async def update_category(category_id: int,
 async def delete_category(
         category_id: int,
         db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(get_current_user_from_token)
 ) -> DeleteCategoryResponse:
-    logger.info(f"Удаление категории {category_id}")
+    logger.info(f"Пользователь {current_user.name} {current_user.surname}: удаление категории {category_id}")
     category_for_deletion = await _get_category_by_id(category_id, db)
 
     if category_for_deletion is None:
