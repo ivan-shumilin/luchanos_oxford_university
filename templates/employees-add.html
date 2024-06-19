@@ -98,7 +98,13 @@
 <!-- InputMask -->
 <script src="static/js/imask.js"></script>
 
-<script>  
+<script>
+
+const USER = {
+    'user_id': "{{ user_id }}",
+    'token': "{{ token }}",
+}
+
 const element = document.getElementById('phone');
 const maskOptions = {
   mask: '+{0} (000) 000 00 000'
@@ -108,7 +114,7 @@ const mask = IMask(element, maskOptions);
 // ###################
 // Запросы по API   ##
 // ###################
-const createUserAPI = async function(data) {
+const createUserAPI = async function(data, token) {
     let url = '/user'
     let body = {
       "name": data["name"].value,
@@ -128,6 +134,7 @@ const createUserAPI = async function(data) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(body)
     });
@@ -156,9 +163,8 @@ async function createUser() {
 
   // проверка формы
   let isOK = validationForm(data);
-
   if (isOK) {
-    let res = await createUserAPI(data);
+    let res = await createUserAPI(data, USER.token);
     if (res.is_active) {
       console.log("Пользователь создан")
       document.getElementById("success-mg").click()
