@@ -53,14 +53,20 @@
 
     <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
   </div>
+  </div>
 </section>
 
 <script>
 
+const USER = {
+    'user_id': "{{ user_id }}",
+    'token': "{{ token }}",
+}
+
 // ###################
 // Запросы по API   ##
 // ###################
-const createPositionAPI = async function(data) {
+const createPositionAPI = async function(data, token) {
     let url = '/user/position'
     let body = {
       "name": data["name"].value,
@@ -71,6 +77,7 @@ const createPositionAPI = async function(data) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(body)
     });
@@ -92,9 +99,9 @@ async function createPosition() {
   let isOK = validationForm(data);
 
   if (isOK) {
-    let res = await createPositionAPI(data);
+    let res = await createPositionAPI(data, USER.token);
     if (res.ok) {
-      console.log("Пользователь создан")
+      console.log("Заведение создано")
       document.getElementById("success-mg").click()
       document.getElementById("name").value = ""
     } else {

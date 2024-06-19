@@ -49,10 +49,15 @@
 
 <script>
 
+const USER = {
+    'user_id': "{{ user_id }}",
+    'token': "{{ token }}",
+}
+
   // ###################
   // Запросы по API   ##
   // ###################
-  const createCategoryAPI = async function(data) {
+  const createCategoryAPI = async function(data, token) {
       let url = '/user/category'
       let body = {
         "name": data["name"].value,
@@ -62,6 +67,7 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(body)
       });
@@ -82,7 +88,7 @@
     let isOK = validationForm(data);
 
     if (isOK) {
-      let res = await createCategoryAPI(data);
+      let res = await createCategoryAPI(data, USER.token);
       if (res.ok) {
         console.log("Категория создана")
         document.getElementById("success-mg").click()
