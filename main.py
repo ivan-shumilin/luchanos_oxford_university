@@ -1,6 +1,7 @@
 import json
 import logging
 from time import sleep
+
 import sentry_sdk
 import uvicorn
 import aiohttp
@@ -9,8 +10,6 @@ from fastapi.routing import APIRouter
 from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 from starlette_exporter import handle_metrics
 from starlette_exporter import PrometheusMiddleware
@@ -24,6 +23,8 @@ from api.service import service_router
 from db.models import User
 from db.models import Point as Points
 from db.session import get_db
+from managment.dump import dump_db
+from managment.repeat_decorator import repeat_every
 from pages.router import router as router_pages
 from schemas import Answer
 
@@ -50,8 +51,8 @@ app = FastAPI(title="luchanos-oxford-university")
 
 # Логгирование
 logger.remove()
-logger.add("info.log", format="Log: {time} -- {level} -- {message} -- {file}:{line} {function}", level="INFO", enqueue=True)
-
+logger.add("info.log", format="Log: {time} -- {level} -- {message} -- {file}:{line} {function}", level="INFO",
+           enqueue=True)
 
 # origins = [
 #     "http://localhost:3000",
@@ -78,13 +79,11 @@ main_api_router.include_router(login_router, prefix="/login", tags=["login"])
 main_api_router.include_router(service_router, tags=["service"])
 app.include_router(main_api_router)
 
-
 ###########################
 # BLOCK WITH PAGES ROUTES #
 ###########################
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(router_pages)
-
 
 ################
 # TG BOT #######
@@ -173,8 +172,8 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
                     }
                 ],
             ],
-         "resize_keyboard": True,
-         "one_time_keyboard": True,
+        "resize_keyboard": True,
+        "one_time_keyboard": True,
     }
 
     # проверка, есть ли геоданные
@@ -236,6 +235,18 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
             print(f"Position info message status: {response.status}")
 
     return {'status': 'OK'}
+
+
+### Регулярные таски ###
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60 * 24)  # 24 часа
+async def regular_dump_task():
+    """Дамп базы раз в день"""
+    logger.info("Начало регулярного дампа")
+    try:
+        await dump_db()
+    except Exception as e:
+        logger.error(f"Во время регулярного дампа произошла ошибка: {e}")
 
 
 if __name__ == "__main__":

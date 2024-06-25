@@ -35,3 +35,6 @@ migrate:
 
 makemigrations:
 	alembic revision --autogenerate -m "comment"
+
+rebuild_app:
+    docker compose -f docker-compose-ci.yaml up --build -d app
