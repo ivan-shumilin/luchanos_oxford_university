@@ -24,7 +24,7 @@ async def load_dump(dump_file) -> str:
     return response
 
 
-async def dump():
+async def dump_db():
     """Делает дамп базы данных в формате tar"""
     current_time = date.today()
     dump_file = f"dump_{current_time.year}_{current_time.month}_{current_time.day}.tar"

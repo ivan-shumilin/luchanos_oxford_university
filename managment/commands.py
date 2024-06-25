@@ -13,7 +13,7 @@ headers = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Au
 
 
 async def upload_file(loadfile, savefile, replace=True):
-    logger.info(f"Загрузка отчета: {loadfile} на диск: {savefile} ")
+    logger.info(f"Загрузка {loadfile} на диск: {savefile} ")
     """Загрузка файла.
     loadfile: Путь к загружаемому файлу
     savefile: Путь к файлу на Диске
