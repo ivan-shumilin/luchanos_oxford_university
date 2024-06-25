@@ -18,7 +18,6 @@ from db.models import User, Position, Point, TypePay, Visit, Category, PortalRol
 from db.session import get_db
 import pandas as pd
 
-from managment.dump import dump
 from reports.helpers import get_formatted_year_and_month, rounding_down, rounding_up
 from managment.commands import upload_to_ydisk
 from reports.report import create_report, collecting_data
@@ -231,8 +230,7 @@ async def employees_add(request: Request, db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/employee")
-async def get_employee(request: Request, db: AsyncSession = Depends(get_db)) -> \
-        Union[_TemplateResponse, RedirectResponse]:
+async def get_employee(request: Request, db: AsyncSession = Depends(get_db)):
     employee_id = request.query_params.get('employee_id', None)
     employee = await _get_user_by_id(employee_id, db)
     token: str = request.query_params.get('token', None)
@@ -533,24 +531,3 @@ async def get_report_info(request: Request, db: AsyncSession = Depends(get_db)):
 
     return RedirectResponse(url='/login')
 
-
-@router.get('/dump')
-async def dump_bd(request: Request, db: AsyncSession = Depends(get_db)):
-    token: str = request.query_params.get('token', None)
-    user_id: str = request.query_params.get('user_id', None)
-
-    user = await _get_user_by_id(user_id, db)
-    is_admin = PortalRole.ROLE_PORTAL_SUPERADMIN in user.roles or PortalRole.ROLE_PORTAL_ADMIN in user.roles
-
-    if token and user_id and is_admin:
-        response = await dump()
-        return templates.TemplateResponse(
-            "backup.html",
-            {
-                "user_id": user_id,
-                "token": token,
-                "request": request,
-                "response": response,
-            }
-        )
-    return RedirectResponse(url='/login')

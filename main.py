@@ -7,7 +7,6 @@ import uvicorn
 import aiohttp
 from fastapi import FastAPI, Request, Depends
 from fastapi.routing import APIRouter
-from fastapi_utils.tasks import repeat_every
 from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,6 +24,7 @@ from db.models import User
 from db.models import Point as Points
 from db.session import get_db
 from managment.dump import dump_db
+from managment.repeat_decorator import repeat_every
 from pages.router import router as router_pages
 from schemas import Answer
 
@@ -239,7 +239,7 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
 
 ### Регулярные таски ###
 @app.on_event("startup")
-@repeat_every(seconds=60 * 60 * 24)  # 24 часа
+@repeat_every(seconds=10)  # 24 часа
 async def regular_dump_task():
     """Дамп базы раз в день"""
     logger.info("Начало регулярного дампа")
