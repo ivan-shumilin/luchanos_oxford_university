@@ -239,7 +239,7 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
 
 ### Регулярные таски ###
 @app.on_event("startup")
-@repeat_every(seconds=10)  # 24 часа
+@repeat_every(seconds=60 * 60 * 24)  # 24 часа
 async def regular_dump_task():
     """Дамп базы раз в день"""
     logger.info("Начало регулярного дампа")
