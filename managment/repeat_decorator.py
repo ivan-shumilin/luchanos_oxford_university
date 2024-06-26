@@ -10,7 +10,7 @@ def repeat_every(
     wait_first: bool = False,
     # logger: logging.Logger | None = logging.getLogger("JobWorker"),
     raise_exceptions: bool = False,
-    max_repetitions: int | None = None,
+    max_repetitions = None,
 ):
     raise_exceptions = False  # TODO: Use config.debug before release
 
