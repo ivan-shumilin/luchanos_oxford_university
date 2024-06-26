@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 from time import sleep
@@ -8,7 +9,7 @@ import aiohttp
 from fastapi import FastAPI, Request, Depends
 from fastapi.routing import APIRouter
 from loguru import logger
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.staticfiles import StaticFiles
 from starlette_exporter import handle_metrics
@@ -113,17 +114,18 @@ def get_point(latitude: float, longitude: float) -> Point:
 async def check_user(obj, db):
     # проверяем есть ли пользователь в системе приславший локацию
     received_username = f'@{obj.message.from_tg.username}'
+    logger.error(f'Проверка пользвоателя {received_username} в системе')
     answer: str | None = None
     try:
-        for _ in range(10):
-            query = select(User).where(User.tg_username == received_username)
+        for _ in range(25):
+            query = select(User).where(and_(User.tg_username == received_username, User.is_active == True))
             user = await db.scalar(query)
-        sleep(1)
+        await asyncio.sleep(1)
     except Exception as err:
         print(err)
         logging.error(f"Ошибка при выполнении запроса к базе данных: {err}")
         user = None
-
+    logger.info(f'Пользвователь: {user}')
     if user is None:
         answer = 'Вы не зарегистрированы в системе. Свяжитесь с администратором для регистрации.'
         print(answer)
@@ -137,7 +139,7 @@ async def check_dist(obj, db):
     target_point = get_point(obj.message.location.latitude, obj.message.location.longitude)
     points = await db.execute(select(Points).where(Points.is_active == True))
     points = points.scalars().all()
-
+    logger.info(f'Проверка заведений для {target_point}')
     for point in points:
         try:
             latitude = point.coordinates.split(":")[0]
@@ -161,7 +163,7 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
     result = await request.json()
     obj = Answer.parse_obj(result)
     print(obj)
-
+    logger.info(f'Начало обращение к телеграмму: {obj}')
     reply_markup = {
         "keyboard":
             [
@@ -177,17 +179,21 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
     }
 
     # проверка, есть ли геоданные
-    point_name: str = ""
     answer: str = "Ответ сервера"
     answer_position: str = "Ответ сервера (геопозиция)"
+    is_user_active = False
+    is_check_dist = False
+
     if obj.message.location == None:
         answer = 'Для отправки геоданных нажмите кнопку "Отправить локацию"'
     else:
         user, answer = await check_user(obj, db)
         if user:
+            is_user_active = True
             point, answer = await check_dist(obj, db)
             if point:
                 # записываем визит в базу
+                is_check_dist = True
                 body: VisitCreate = VisitCreate.parse_obj(
                     {
                         "user_id": user.user_id,
@@ -204,19 +210,15 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
                     res = await _create_new_visit(body, db)
                     print(res)
                 except:
-                    answer = 'Возникла ошибка при записи данных. Попробуйте еще раз.'
+                    answer = 'Возникла ошибка при записи данных.'
+                    answer_position = 'Попробуйте еще раз.'
                     print(answer)
+                    logger.error(answer)
             # except IntegrityError as err:
             #     logger.error(err)
     data = {
         'chat_id': obj.message.chat.id,
         'text': answer,
-        'reply_markup': json.dumps(reply_markup)
-    }
-
-    data_position = {
-        'chat_id': obj.message.chat.id,
-        'text': answer_position,
         'reply_markup': json.dumps(reply_markup)
     }
 
@@ -227,12 +229,18 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
         ) as response:
             print(f"Shift info message status: {response.status}")
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-                f'https://api.telegram.org/bot{TG_API}/sendMessage',
-                data=data_position
-        ) as response:
-            print(f"Position info message status: {response.status}")
+    if is_user_active and is_check_dist:
+        data_position = {
+            'chat_id': obj.message.chat.id,
+            'text': answer_position,
+            'reply_markup': json.dumps(reply_markup)
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                    f'https://api.telegram.org/bot{TG_API}/sendMessage',
+                    data=data_position
+            ) as response:
+                print(f"Position info message status: {response.status}")
 
     return {'status': 'OK'}
 
