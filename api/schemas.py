@@ -31,7 +31,7 @@ class ShowUser(TunedModel):
     surname: str
     patronymic: str
     tg_username: str
-    email: EmailStr
+    email: str
     phone: str
     is_active: bool
     position: int
@@ -44,7 +44,7 @@ class UserCreate(BaseModel):
     surname: str
     patronymic: str
     tg_username: str
-    email: EmailStr
+    email: str
     phone: str
     password: str
     position: int
