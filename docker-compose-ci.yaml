@@ -10,3 +10,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - /root/MyProjects/luchanos_oxford_university/info.log:/info.log

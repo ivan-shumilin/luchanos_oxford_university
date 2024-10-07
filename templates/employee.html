@@ -239,20 +239,21 @@ function validationForm(data) {
   var strEmail = new RegExp("[^a-zA-Z0-9/-/./@/_-]+");
   const formControls = document.querySelectorAll('.form-control');
   formControls.forEach(control => {
-    // проверка каждого поля. все поля должны быть заполнены
-    if ((!control.value || control.value == "none") & !control.classList.contains('none-true')) {
-      isOK = false
-      control.classList.add('is-invalid');
-      document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
-    }
+      // проверка каждого поля. все поля должны быть заполнены
+      if (control.id !== "email" && (!control.value || control.value === "none") && !control.classList.contains('none-true')) {
+          {
+              isOK = false
+              control.classList.add('is-invalid');
+              document.getElementById(`${control.id}-error`).innerHTML = "Обязательное поле"
+          }
+      }
   });
 
-  // // проверка почты
-  if (strEmail.test(data.email.value) || !data.email.value.includes('@') || !data.email.value.includes('.')) {
-      isOK = false
-      data.email.classList.add('is-invalid');
-      document.getElementById(`${data.email.id}-error`).innerHTML = "Такой почты не существует"
-  }
+   // проверка почты
+   // if (strEmail.test(data.email.value) || !data.email.value.includes('@') || !data.email.value.includes('.')) {//  isOK = false
+    //  data.email.classList.add('is-invalid');
+    //  document.getElementById(`${data.email.id}-error`).innerHTML = "Такой почты не существует"
+  // }
   return isOK
 }
 
