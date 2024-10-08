@@ -118,7 +118,7 @@ async def check_user(obj, db):
     answer: str | None = None
     try:
         for _ in range(25):
-            query = select(User).where(and_(User.tg_username == received_username, User.is_active is True))
+            query = select(User).where(and_(User.tg_username == received_username, User.is_active.is_(True)))
             user = await db.scalar(query)
         await asyncio.sleep(1)
     except Exception as err:
