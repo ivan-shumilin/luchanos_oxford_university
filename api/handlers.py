@@ -83,12 +83,6 @@ async def create_user(body: UserCreate,
                 detail={"name": f"Database error: {err}"}
             )
 
-    if user is not None:
-        logger.error(f"Почта {user.email} пользвователя {body.name} {body.surname} уже используется")
-        raise HTTPException(
-            status_code=404,
-            detail={"name": f"Почта {body.email} уже используется."}
-        )
     user = await _get_user_by_phone(body.phone, db)
     if user is not None:
         logger.error(f"Телефон {user.phone} пользвователя {body.name} {body.surname} уже используется")

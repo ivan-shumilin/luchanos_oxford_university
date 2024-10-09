@@ -40,7 +40,7 @@ def register(request: Request):
     return templates.TemplateResponse("auth/register.html", {"request": request})
 
 
-@router.get("/login")
+@router.get("/")
 def login(request: Request):
     return templates.TemplateResponse("auth/login.html", {"request": request})
 
