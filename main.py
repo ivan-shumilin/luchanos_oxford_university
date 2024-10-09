@@ -117,12 +117,9 @@ async def check_user(obj, db):
     logger.error(f'Проверка пользвоателя {received_username} в системе')
     answer: str | None = None
     try:
-        for _ in range(25):
-            query = select(User).where(and_(User.tg_username == received_username, User.is_active.is_(True)))
-            user = await db.scalar(query)
-        await asyncio.sleep(1)
+        query = select(User).where(and_(User.tg_username == received_username, User.is_active.is_(True)))
+        user = await db.scalar(query)
     except Exception as err:
-        print(err)
         logging.error(f"Ошибка при выполнении запроса к базе данных: {err}")
         user = None
     logger.info(f'Пользвователь: {user}')
