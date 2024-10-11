@@ -111,10 +111,8 @@ def get_point(latitude: float, longitude: float) -> Point:
     return Point(latitude=latitude, longitude=longitude)
 
 
-async def check_user(obj, db):
+async def check_user(db, received_username):
     # проверяем есть ли пользователь в системе приславший локацию
-    received_username = f'@{obj.message.from_tg.username}'
-    logger.error(f'Проверка пользвоателя {received_username} в системе')
     answer: str | None = None
     try:
         query = select(User).where(and_(User.tg_username == received_username, User.is_active.is_(True)))
@@ -142,6 +140,7 @@ async def check_dist(obj, db):
             latitude = point.coordinates.split(":")[0]
             longitude = point.coordinates.split(":")[1]
         except:
+            logger.error("НЕ удалось сплитнуть координаты")
             continue
 
         dist = int(distance(
@@ -149,9 +148,11 @@ async def check_dist(obj, db):
             get_point(latitude, longitude)
         ).m)
         if dist < 500:
+            logger.info(f"Пользователь находится на объекте: дистанция {dist}")
             return point, answer
 
     answer = f'Не находитесь на объекте'
+    logger.info(f"Пользователь находится НЕ на объекте")
     return None, answer
 
 
@@ -184,7 +185,9 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
     if obj.message.location == None:
         answer = 'Для отправки геоданных нажмите кнопку "Отправить локацию"'
     else:
-        user, answer = await check_user(obj, db)
+        received_username = f'@{obj.message.from_tg.username}'
+        logger.info(f'Проверка пользвоателя {received_username} в системе')
+        user, answer = await check_user(db, received_username)
         if user:
             is_user_active = True
             point, answer = await check_dist(obj, db)
