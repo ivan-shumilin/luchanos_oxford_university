@@ -204,9 +204,9 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
                     if not await _check_visit(user.user_id, db):
                         answer = 'Начало смены\n'
                     else:
-                        answer = 'Конец смены\n'
+                        answer = 'Данные отправлены: конец смены\n'
                     answer_position = f'Данные записаны. Местоположение: {point.name}\n'
-                    print(answer)
+                    logger.info(answer)
                     res = await _create_new_visit(body, db)
                     print(res)
                 except:
