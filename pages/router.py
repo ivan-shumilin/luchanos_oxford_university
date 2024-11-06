@@ -7,6 +7,7 @@ from loguru import logger
 from sqlalchemy import select, and_, func, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
+from starlette import status
 from starlette.responses import RedirectResponse
 from starlette.templating import _TemplateResponse
 
@@ -369,7 +370,6 @@ async def categories_list(request: Request, db: AsyncSession = Depends(get_db)):
 
 @router.get("/category-add")
 def category_add(request: Request):
-
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
 
@@ -387,7 +387,6 @@ def category_add(request: Request):
 
 @router.get("/category")
 async def get_category(request: Request, db: AsyncSession = Depends(get_db)):
-
     category_id = int(request.query_params.get('category_id', None))
     token: str = request.query_params.get('token', None)
     user_id = request.query_params.get('user_id', None)
@@ -443,7 +442,7 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
             User.is_active == True,
             Point.is_active == True,
             Visit.is_active == True,
-            )
+        )
         )
     )
     visits = await db.execute(query)
@@ -531,3 +530,22 @@ async def get_report_info(request: Request, db: AsyncSession = Depends(get_db)):
 
     return RedirectResponse(url='/login')
 
+
+@router.get('/report_api/{year:int}/{month:str}')
+async def get_report_info(year: int, month: str, request: Request, db: AsyncSession = Depends(get_db)):
+    logger.info("Создание отчета посещаемости через АПИ")
+    month, year = month, year
+    data, hours_data = await collecting_data(month, year, db)
+    try:
+        create_report(month, year, data, hours_data, db)
+    except Exception as e:
+        logger.error(e)
+        print(e)
+    try:
+        loadfile = f'static/reports/report_{month}_{year}.xlsx'  # локальный путь
+        savefile = f'report_time_tracking/report_{month}_{year}.xlsx'  # путь на диске
+        response = await upload_to_ydisk(loadfile, savefile)
+        return {"status_code": status.HTTP_200_OK, "response": "ok"}
+    except Exception as e:
+        logger.error(e)
+        return {"status_code": status.HTTP_500_INTERNAL_SERVER_ERROR, "detail": e}
