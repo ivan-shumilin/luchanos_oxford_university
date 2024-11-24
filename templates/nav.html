@@ -76,12 +76,45 @@
 
           <!-- Журнал -->
           <li class="nav-item">
-            <a id="visits_journal" href="visits_journal/?token={{ token }}&user_id={{ user_id }}"  class="nav-link">
+            <a id="visits_journal" class="nav-link">
               <i class="nav-icon fas fa-calendar text-olive"></i>
               <p>
                 Журнал
+                <i class="fas fa-angle-left right text-olive"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
+                <a href="visits_journal/?token={{ token }}&user_id={{ user_id }}" class="nav-link">
+                  <i class="nav-icon fas fa-circle"></i>
+                  <p>Все заведения</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="visits_journal/?token={{ token }}&user_id={{ user_id }}&point_id=9" class="nav-link">
+                  <i class="nav-icon fas fa-circle"></i>
+                  <p>Demi</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="visits_journal/?token={{ token }}&user_id={{ user_id }}&point_id=1" class="nav-link">
+                  <i class="nav-icon fas fa-circle"></i>
+                  <p>Petrushka x Alcon</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="visits_journal/?token={{ token }}&user_id={{ user_id }}&point_id=2" class="nav-link">
+                  <i class="nav-icon fas fa-circle"></i>
+                  <p>Petrushka x Hadassah</p>
+              </a>
+            </li>
+              <li class="nav-item">
+                <a href="visits_journal/?token={{ token }}&user_id={{ user_id }}&point_id=10" class="nav-link">
+                  <i class="nav-icon fas fa-circle"></i>
+                  <p>Petrushka x Renova</p>
+              </a>
+            </li>
+            </ul> 
           </li>
 
           <!-- Заведения -->

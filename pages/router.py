@@ -429,6 +429,7 @@ def user_documentation(request: Request):
 async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
     token: str = request.query_params.get('token', None)
     user_id: str = request.query_params.get('user_id', None)
+    point_id = request.query_params.get('point_id', None)
 
     query = (
         select(
@@ -442,6 +443,7 @@ async def visits_journal(request: Request, db: AsyncSession = Depends(get_db)):
             User.is_active == True,
             Point.is_active == True,
             Visit.is_active == True,
+            (User.point == int(point_id)) if point_id is not None else True,
         )
         )
     )

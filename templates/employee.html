@@ -60,7 +60,7 @@
               <div class="form-group">
                 <select id="point" onclick="deleteError()" class="form-control clear" placeholder="Заведение">
                       {% for point in points %}
-                        {% if employee.point and point.id == employee.point.id %}
+                        {% if point.id == employee.point %}
                             <option value="{{ point.id }}" selected>{{ point.name }}</option>
                         {% else %}
                             <option value="{{ point.id }}">{{ point.name }}</option>
