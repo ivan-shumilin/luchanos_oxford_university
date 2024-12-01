@@ -215,11 +215,11 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
                     logger.info(answer)
                     res = await _create_new_visit(body, db)
                     print(res)
-                except:
+                except Exception as err:
                     answer = 'Возникла ошибка при записи данных.'
                     answer_position = 'Попробуйте еще раз.'
                     print(answer)
-                    logger.error(answer)
+                    logger.error(f'Ошибка при записи данных: {err}')
             # except IntegrityError as err:
             #     logger.error(err)
     data = {
@@ -233,7 +233,7 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
                 f'https://api.telegram.org/bot{TG_API}/sendMessage',
                 data=data
         ) as response:
-            print(f"Shift info message status: {response.status}")
+            logger.info(f"Отправка сообщения: {response.status}")
 
     if is_user_active and is_check_dist:
         data_position = {
@@ -246,7 +246,7 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
                     f'https://api.telegram.org/bot{TG_API}/sendMessage',
                     data=data_position
             ) as response:
-                print(f"Position info message status: {response.status}")
+                logger.info(f"Отправка сообщения: {response.status}")
 
     return {'status': 'OK'}
 
