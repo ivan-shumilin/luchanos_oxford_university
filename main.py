@@ -122,8 +122,7 @@ async def check_user(db, received_username):
         user = None
     logger.info(f'Пользвователь: {user}')
     if user is None:
-        answer = 'Вы не зарегистрированы в системе. Свяжитесь с администратором для регистрации.'
-        print(answer)
+        answer = 'Вы не зарегистрированы в системе или бот снова тупит. Свяжитесь с администратором для регистрации.'
         logger.error(answer)
 
     return user, answer
@@ -187,7 +186,14 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
     else:
         received_username = f'@{obj.message.from_tg.username}'
         logger.info(f'Проверка пользвоателя {received_username} в системе')
-        user, answer = await check_user(db, received_username)
+
+        for try_count in range(7):
+            user, answer = await check_user(db, received_username)
+            if user:
+                break
+            await asyncio.sleep(1)
+            logger.info(f'Попытка {try_count + 1} из 7')
+
         if user:
             is_user_active = True
             point, answer = await check_dist(obj, db)
